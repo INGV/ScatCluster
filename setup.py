@@ -10,7 +10,7 @@ PYTHON_CODE_PREFIX = 'scatcluster'
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
-LONG_DESCRIPTION = (this_directory / "README.md").read_text()
+LONG_DESCRIPTION = (this_directory / "../README.md").read_text()
 
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
