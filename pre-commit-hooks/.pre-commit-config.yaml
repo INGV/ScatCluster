@@ -1,0 +1,95 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    -   id: trailing-whitespace # trims trailing whitespace
+    -   id: end-of-file-fixer # ensures that a file is either empty, or ends with one newline
+    -   id: check-yaml # checks yaml files for parseable syntax
+    -   id: check-added-large-files # checks for files larger than a certain size
+    -   id: check-docstring-first # checks a common error of defining a docstring after code
+    -   id: check-json # checks json files for parseable syntax
+    -   id: check-ast # checks whether the files parse as valid python
+    -   id: debug-statements # checks for debugger imports and py37+ `breakpoint()` calls in python source
+    -   id: requirements-txt-fixer # sorts entries in requirements.txt
+    -   id: check-merge-conflict # checks for files that contain merge conflict strings
+    -   id: double-quote-string-fixer # replaces double-quoted strings with single-quoted strings
+    -   id: detect-private-key # detects the presence of private keys
+    -   id: sort-simple-yaml # sorts simple yaml files which consist only of top-level keys
+    -   id: check-symlinks # checks for symlinks which do not point to anything
+-   repo: https://github.com/hadialqattan/pycln
+    rev: v2.4.0
+    hooks:
+    -   id: pycln
+        args: [--all]
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        args: [-l 120]
+-   repo: https://github.com/google/yapf
+    rev: v0.40.1
+    hooks:
+    -   id: yapf
+        args: [-vv, -r, "--style={based_on_style: pep8, column_limit: 120}", -i]
+-   repo: https://github.com/PyCQA/flake8
+    rev: 6.0.0
+    hooks:
+    -   id: flake8
+        args: [ "--max-line-length=120", "--extend-ignore=E231,E741,E127" ]
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.5
+    hooks:
+    -   id: python-bandit-vulnerability-check
+        args: [-ll, --skip, "B321,B402", --recursive, .]
+-   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+    rev: v1.3.1
+    hooks:
+    -   id: python-safety-dependencies-check
+        files: requirements.txt
+-   repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v3.0.0a5
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+          [
+            "-rn", # Only display messages
+  #          "-sn", # Don't display the score
+            "--rcfile=ds-pre-commit-hooks/.pylintrc", # Link to your config file
+            "--load-plugins=pylint.extensions.docparams", # Load an extension
+          ]
+-   repo: https://github.com/MarcoGorelli/madforhooks # sorts environment.yml
+    rev: 0.3.0
+    hooks:
+    -   id: conda-env-sorter
+    -   id: no-print-statements
+-   repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+    rev: v0.1.0
+    hooks:
+    -   id: dockerfilelint
+        stages: [commit]
+-   repo: https://github.com/Yelp/detect-secrets
+    rev: v1.2.0
+    hooks:
+    -   id: detect-secrets
+        exclude: package.lock.json
+-   repo: https://github.com/econchick/interrogate
+    rev: 1.7.0
+    hooks:
+      - id: interrogate
+        args: ["--fail-under=80", "--verbose"]
+-   repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.5
+    hooks:
+    -   id: docformatter
+        args: ["--in-place", "--black", "-r", "--style=epytext", "--wrap-descriptions=120",
+               "--wrap-summaries=120","--pre-summary-newline", "--add-summary-space",
+               "--version"]
+-   repo: https://github.com/Carreau/velin
+    rev: 0.0.12
+    hooks:
+    -   id: velin
+        args: ["--write"]
