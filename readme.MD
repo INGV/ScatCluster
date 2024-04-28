@@ -6,7 +6,7 @@ A workflow for clustering continuous time series with a deep scattering network.
 <!-- <img src=docs/source/_static/logo_scatseisnet.png width=250px/> -->
 
 [![Python Version](https://img.shields.io/pypi/pyversions/scatcluster)](https://pypi.org/project/scatcluster/)
-[![PyPI Version](https://img.shields.io/pypi/v/scatcluster.svg)](https://pypi.org/project/scatcluster/)\
+[![PyPI version](https://badge.fury.io/py/scatcluster.svg)](https://badge.fury.io/py/scatcluster)
 ![GitHub last commit](https://img.shields.io/github/last-commit/INGV/scatcluster)
 [![Documentation Status](https://readthedocs.org/projects/scatcluster/badge/?version=latest)](https://scatcluster.readthedocs.io/en/latest/?badge=latest)
 
