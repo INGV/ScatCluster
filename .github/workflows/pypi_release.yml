@@ -22,9 +22,6 @@ jobs:
     - name: Update version in setup.py
       run: >-
         sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" setup.py
-    - name: Update version in conda/meta.yaml
-      run: >-        
-        find ./conda/*.yaml -type f -exec sed -i -e "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" {} \
     - name: Install pypa/build
       run: >-
         python3 -m
@@ -130,17 +127,3 @@ jobs:
       with:
         repository-url: https://test.pypi.org/legacy/
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-
-  publish-to-conda:
-    name: Publish conda package to Anaconda
-    needs: 
-    - github-release
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: publish-to-conda
-      uses: fcakyon/conda-publish-action@master
-      with:
-        subdir: 'conda'
-        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
-        platforms: 'win osx linux'
