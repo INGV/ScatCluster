@@ -1,3 +1,4 @@
 jupytext
 nbconvert
 ipykernel
+scatcluster
