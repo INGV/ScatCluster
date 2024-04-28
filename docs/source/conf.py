@@ -1,16 +1,25 @@
 import os
 import sys
+import sphinx_material
+from pkg_resources import DistributionNotFound, get_distribution
 
+# Fanciness to get version number
+try:
+    __version__ = get_distribution("scatcluster").version
+except DistributionNotFound:
+    __version__ = "dev"
+    
 # Path setup
 sys.path.insert(0, os.path.abspath('../../'))
 
 # Project information
 project = 'scatcluster'
-copyright = '2024, Christopher Zerafa and Carlo Giunchi'
 author = 'Christopher Zerafa and Carlo Giunchi'
+copyright = '2024, '+ author
 
-release = '0.0.1'
-version = '0.0.1'
+version = __version__
+release = __version__
+
 
 # General configuration
 exclude_patterns = [
@@ -35,6 +44,8 @@ extensions = [
     'nbsphinx',
     'numpydoc',
     'IPython.sphinxext.ipython_console_highlighting',
+    'sphinx_copybutton',
+    "nbsphinx",
 ]
 
 # favicons = [
@@ -92,3 +103,38 @@ autosummary_generate = True
 language = 'en'
 
 nbsphinx_allow_errors = True
+
+
+# HTML theme
+html_show_sourcelink = False
+html_sidebars = {
+    "**": [
+        "logo-text.html",
+        "globaltoc.html",
+        "localtoc.html",
+        "searchbox.html",
+    ]
+}
+
+extensions.append("sphinx_material")
+html_theme_path = sphinx_material.html_theme_path()
+html_context = sphinx_material.get_html_context()
+html_theme = "sphinx_material"
+html_title = "ScatCluster"
+html_short_title = "ScatCluster"
+html_theme_options = {
+    "nav_title": "scatcluster",
+    "logo_icon": "&#xe869",
+    "color_primary": "blue",
+    "color_accent": "light-blue",
+    "repo_url": "https://github.com/INGV/ScatCluster",
+    "repo_name": "scatcluster",
+    "globaltoc_depth": 1,
+    "globaltoc_collapse": False,
+    "globaltoc_includehidden": False,
+    "heroes": {
+        "index": "Don't save executed Jupyter notebooks to your git repos "
+        "ever again!"
+    },
+    "nav_links": [],
+}
