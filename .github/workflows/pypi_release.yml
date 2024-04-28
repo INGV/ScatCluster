@@ -7,9 +7,6 @@ on:
 
 permissions:
   id-token: write # This is required for requesting the JWT
-  contents: read  # This is required for actions/checkout
-  packages: write
-  statuses: write
          
 jobs:
   build-n-publish:
@@ -52,5 +49,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-          LICENSE.txt
-          *.jar
+          LICENSE
