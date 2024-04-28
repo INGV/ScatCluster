@@ -77,7 +77,7 @@ html_context = {
 
 # Options for AutoAPI
 autoapi_type = "python"
-autoapi_dirs = ["../../scatcluster"]
+autoapi_dirs = ["../../src/scatcluster"]
 autosummary_generate = True
 
 # Theme options are theme-specific and customize the look and feel of a theme

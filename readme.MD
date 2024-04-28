@@ -8,6 +8,8 @@ A workflow for clustering continuous time series with a deep scattering network.
 [![Python Version](https://img.shields.io/pypi/pyversions/scatcluster)](https://pypi.org/project/INGV/scatcluster/)
 [![PyPI Version](https://img.shields.io/pypi/v/scatcluster.svg)](https://pypi.org/project/scatcluster/)\
 ![GitHub last commit](https://img.shields.io/github/last-commit/INGV/scatcluster)
+[![Documentation Status](https://readthedocs.org/projects/scatcluster/badge/?version=latest)](https://scatcluster.readthedocs.io/en/latest/?badge=latest)
+
 
 </div>
 
