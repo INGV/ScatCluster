@@ -1,4 +1,5 @@
 import datetime
+from glob import glob
 from typing import List
 
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ import pandas as pd
 from matplotlib import dates as mdates
 from obspy.core import UTCDateTime
 from scipy.spatial.distance import euclidean
-from glob import glob
+
 from scatcluster.helper import COLORS, is_gpu
 
 
@@ -175,13 +176,15 @@ class Waveforms:
         scat_file = np.load(file_list[0])
         print(f"First order : {scat_file['scat_coef_0'].shape[1:]}")
         print(f"Second order : {scat_file['scat_coef_1'].shape[1:]}")
-        
+
         num_channels = scat_file['scat_coef_0'].shape[1:][0]
         first_order = scat_file['scat_coef_0'].shape[1:][1]
         second_order = scat_file['scat_coef_1'].shape[1:][1:]
 
-        scat_vec_list = [self.retreive_scat_vector(self.scat_coef_vectorized, i, num_channels, first_order, second_order) 
-                         for i in df_preds.index]
+        scat_vec_list = [
+            self.retreive_scat_vector(self.scat_coef_vectorized, i, num_channels, first_order, second_order)
+            for i in df_preds.index
+        ]
 
         df_scat_vec = pd.DataFrame({
             'scat_vec_first_order': [sv[0] for sv in scat_vec_list],
@@ -201,7 +204,7 @@ class Waveforms:
                                                    channel: str = 'HHZ',
                                                    num_waveforms: int = 5,
                                                    num_scat_coeff_stacking: int = 10,
-                                                   GPU:bool = is_gpu()):
+                                                   GPU: bool = is_gpu()):
         if GPU:
             self.net.banks[0].centers = self.net.banks[0].centers.get()
             self.net.banks[1].centers = self.net.banks[2].centers.get()
@@ -256,8 +259,9 @@ class Waveforms:
                 print(f'  The waveform in the centre of Cluster {cluster} contains no traces. This \n' +
                       '  is most likely a cluster of damaged/missing data.')
             else:
-                df_scat_vec = df_pred_scat_vec.loc[(df_pred_scat_vec.predictions == cluster), ].sort_values(
-                    by='cluster_rank').reset_index()
+                df_scat_vec = df_pred_scat_vec.loc[
+                    (df_pred_scat_vec.predictions == cluster),
+                ].sort_values(by='cluster_rank').reset_index()
 
                 # WAVEFORMS
 

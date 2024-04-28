@@ -6,7 +6,7 @@ import obspy
 import pandas as pd
 from matplotlib import dates as mdates
 from scipy.spatial.distance import euclidean
-from tqdm import  tqdm
+from tqdm import tqdm
 
 from scatcluster.helper import COLORS
 
@@ -26,7 +26,9 @@ class Predictions:
             int: Predicted cluster id
         """
         time_window_num = mdates.date2num(obspy.UTCDateTime(time_window))
-        position_in_time = len(self.dendrogram_timestamps[self.dendrogram_timestamps <= time_window_num, ])
+        position_in_time = len(self.dendrogram_timestamps[
+            self.dendrogram_timestamps <= time_window_num,
+        ])
         if position_in_time > 1:
             return self.dendrogram_predictions[position_in_time - 1]
         else:
@@ -95,7 +97,9 @@ class Predictions:
             'predictions': self.dendrogram_predictions
         })
         for clust in np.unique(df_preds['predictions']):
-            dt = df_preds.loc[df_preds['predictions'] == clust, ]
+            dt = df_preds.loc[
+                df_preds['predictions'] == clust,
+            ]
             plt.vlines(dt['DATES'], clust - 0.5, clust + 0.5, color=COLORS[clust])
         plt.yticks(range(1, df_preds['predictions'].max() + 1))
         plt.ylabel('Cluster')

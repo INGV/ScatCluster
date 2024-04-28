@@ -31,7 +31,7 @@ classifiers=[
         'Topic :: Software Development :: Libraries :: Python Modules'
     ]
 dependencies = [
-    "pydantic>=2.5.3", "tqdm", "obspy>=1.4.0", "scatseisnet>=0.2.1", 
+    "pydantic>=2.5.3", "tqdm", "obspy>=1.4.0", "scatseisnet>=0.2.1",
     "pandas", "seaborn", "fastcluster", "scikit-learn==1.2.2", "click",
     "nmmn", "astropy", "parse", "scipy"
 ]

@@ -22,7 +22,9 @@ class ExternalCorrelation:
 
         num_clusters = np.unique(df_predictions['predictions'])
         for clust in num_clusters:
-            dt = df_predictions.loc[df_predictions['predictions'] == clust, ]
+            dt = df_predictions.loc[
+                df_predictions['predictions'] == clust,
+            ]
             axs[0].vlines(dt['dates'], clust - 0.5, clust + 0.5, color=COLORS[clust])
         axs[0].set_yticks(range(1, df_predictions['predictions'].max() + 1))
         axs[0].set_ylabel('Cluster')
@@ -47,9 +49,12 @@ class ExternalCorrelation:
         date_start = max(df_external.DATES.min(), df_predictions.DATES.min())
         date_end = min(df_external.DATES.max(), df_predictions.DATES.max())
 
-        df_predictions_same = df_predictions.loc[((df_predictions.DATES >= date_start) &
-                                                  (df_predictions.DATES <= date_end)), ]
-        df_external_same = df_external.loc[((df_external.DATES >= date_start) & (df_external.DATES <= date_end)), ]
+        df_predictions_same = df_predictions.loc[
+            ((df_predictions.DATES >= date_start) & (df_predictions.DATES <= date_end)),
+        ]
+        df_external_same = df_external.loc[
+            ((df_external.DATES >= date_start) & (df_external.DATES <= date_end)),
+        ]
 
         df_merge = pd.merge(left=df_predictions_same[['dates', 'predictions']],
                             left_on='dates',
@@ -88,7 +93,9 @@ class ExternalCorrelation:
             fig, axs = plt.subplots(1, 1, figsize=(10, 5), sharex=True)
             num_clusters = np.unique(df_merge['predictions'])
             for clust in num_clusters:
-                dt = df_merge.loc[df_merge['predictions'] == clust, ]
+                dt = df_merge.loc[
+                    df_merge['predictions'] == clust,
+                ]
                 axs.vlines(dt['dates'], clust - 0.5, clust + 0.5, color=COLORS[clust])
                 axs.plot(df_merge['dates'][rolling_window_size - 1:],
                          df_detection_rate[clust].values + clust - 0.5,

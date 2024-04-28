@@ -7,8 +7,8 @@ Rationale
 Tutorials
 ---------
 
-The tutorials are available in the `Tutorials` section from the navigation bar. 
-We will also make sure that most of the notebooks that we use for the papaers are made avaiable. 
+The tutorials are available in the `Tutorials` section from the navigation bar.
+We will also make sure that most of the notebooks that we use for the papaers are made avaiable.
 If you have specific questions you would like to address, please open an issue on the github repository or contact us direclty.
 
 Contribution guidelines

@@ -25,7 +25,9 @@ class ICA:
 
     def _get_index_from_UTC_timestamp(self, utc_timestamp: str):
         df_time = pd.DataFrame({'time': self.data_times})
-        return max(df_time.loc[df_time['time'] < mdates.date2num(UTCDateTime(utc_timestamp)), ].index)
+        return max(df_time.loc[
+            df_time['time'] < mdates.date2num(UTCDateTime(utc_timestamp)),
+        ].index)
 
     def process_ICA_single(self,
                            num_ICA: int,
@@ -60,7 +62,9 @@ class ICA:
         scat_coeff_data = self.data_scat_coef_vectorized.copy()
         if exclude_timestamps is not None:
             for ts in exclude_timestamps:
-                print(f'Timestamp {UTCDateTime(ts)} - {UTCDateTime(ts) + (self.network_segment * exclude_timestamps_skip)} has been excluded from the Scaling fit and Model fit.')
+                print(
+                    f'Timestamp {UTCDateTime(ts)} - {UTCDateTime(ts) + (self.network_segment * exclude_timestamps_skip)} has been excluded from the Scaling fit and Model fit.'
+                )
                 ts_index = self._get_index_from_UTC_timestamp(ts)
                 scat_coeff_data = np.delete(scat_coeff_data, np.s_[ts_index:ts_index + exclude_timestamps_skip], 0)
 
@@ -93,18 +97,17 @@ class ICA:
         # save the features
         np.savez(
             f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_features_{num_ICA}.npz',
-            features = features,
-            features_inverse = features_inverse,
-            score_explained_variance = score_exp_var,
-            score_mse = score_mse
-            )
+            features=features,
+            features_inverse=features_inverse,
+            score_explained_variance=score_exp_var,
+            score_mse=score_mse)
 
         if return_data:
             return score_exp_var, score_mse, model, features
 
-    def process_ICA_range(self, 
+    def process_ICA_range(self,
                           exclude_timestamps: Optional[list[str]] = None,
-                          exclude_timestamps_skip: int = 3, 
+                          exclude_timestamps_skip: int = 3,
                           **kwargs) -> None:
         """Process ICA dimension reduction for a range of possible dimensions controlled via ica_min_ICAs, ica_max_ICAs and ica_ev_limit.
         """
@@ -114,11 +117,11 @@ class ICA:
         num_ICA = ica_min_ICAs - 1
         while (score_exp_var <= self.ica_ev_limit and num_ICA < ica_max_ICAs):
             num_ICA += 1
-            score_exp_var, _, model, features = self.process_ICA_single(num_ICA=num_ICA, 
-                                                                        return_data=True, 
+            score_exp_var, _, model, features = self.process_ICA_single(num_ICA=num_ICA,
+                                                                        return_data=True,
                                                                         exclude_timestamps=exclude_timestamps,
                                                                         exclude_timestamps_skip=exclude_timestamps_skip,
-                           **kwargs)
+                                                                        **kwargs)
         if num_ICA == ica_max_ICAs:
             print(
                 f'Failed to reach an explained variance of {self.ica_ev_limit* 100:0.5f} with a max number of {self.ica_max_ICAs} ICAs. Either increase the maximum number of ICAs or decrease the Explained Variance Limit.'
@@ -148,7 +151,7 @@ class ICA:
             open(
                 f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_dimension_{num_ICA}.pickle',
                 'rb'))
-        
+
         ica_results = np.load(
             f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_features_{num_ICA}.npz'
         )
@@ -156,7 +159,7 @@ class ICA:
         self.ica_features_inverse = ica_results['features_inverse']
         self.ica_explained_variance_score = ica_results['score_explained_variance']
         self.ica_mse = ica_results['score_mse']
-        
+
         self.ica_number_components = num_ICA
 
         print(f'Compressed Vectorised Scat. Coefficients Array after ICA : {self.ica_features.shape}')
@@ -188,7 +191,9 @@ class ICA:
             color = f'C{index % 3}'
             feature *= 0.5
             feature += index + 1
-            feature_filtered = medfilt(feature, self.ica_median_filter if self.ica_median_filter is not None else (int( 3600/self.network_segment)*3)+1  )
+            feature_filtered = medfilt(
+                feature, self.ica_median_filter if self.ica_median_filter is not None else
+                (int(3600 / self.network_segment) * 3) + 1)
             ax.plot(self.data_times, feature, '.', ms=3, alpha=0.5, mew=0, color=color)
             ax.plot(self.data_times, feature_filtered, lw=0.7, color='k')
 
@@ -211,7 +216,9 @@ class ICA:
         ax.spines['right'].set_visible(False)
         ax.spines['left'].set_visible(False)
         ax.tick_params(axis='y', length=0)
-        plt.title(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{dimensions}\n{dimensions} ICAs - Explained Variance : {self.ica_explained_variance_score*100:0.5f}')
+        plt.title(
+            f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{dimensions}\n{dimensions} ICAs - Explained Variance : {self.ica_explained_variance_score*100:0.5f}'
+        )
 
         plt.savefig(
             f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{dimensions}.png'
@@ -255,7 +262,7 @@ class ICA:
 
     def plot_ica_contribution(self, **kwargs) -> None:
         """Visualise the ICA contribution to each cluster
-            """
+        """
 
         # Calculate centroid
         classes = np.unique(self.dendrogram_predictions)

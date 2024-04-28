@@ -3,10 +3,10 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import obspy
+import obspy.signal.filter
 from matplotlib import dates as mdates
 from obspy import Stream
 from tqdm import tqdm
-import obspy.signal.filter
 
 
 class AnalysisProcessing():

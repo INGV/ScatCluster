@@ -37,11 +37,11 @@ def tqdm_importer():
 def demad(x, factor=10.0):
     """Normalize signal with median absolute deviation.
 
-    Arguments
-    ---------
-    x: np.ndarray
+    Parameters
+    ----------
+    x : np.ndarray
         The input signal.
-    factor: float, optional
+    factor : float, optional
         An additional normalization factor.
 
     Returns

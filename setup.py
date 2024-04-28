@@ -5,7 +5,6 @@ from setuptools import find_packages
 
 try:
     from setuptools import setup
-
 except ImportError:
     from distutils.core import setup
 
@@ -44,9 +43,7 @@ setup(
     package_data={NAME: ['py.typed']},
     include_package_data=True,
     install_requires=REQUIRED,
-    extras_require={
-        'gpu': [*REQUIRED, *REQUIRED_GPU]
-    },
+    extras_require={'gpu': [*REQUIRED, *REQUIRED_GPU]},
     license='Apache',
     classifiers=[
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
