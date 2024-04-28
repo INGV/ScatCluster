@@ -1,5 +1,3 @@
-import os
-import pathlib
 from setuptools import find_packages, setup
 
 NAME = 'scatcluster'
@@ -8,10 +6,6 @@ URL = 'https://github.com/INGV/ScatCluster'
 AUTHOR = 'christopher.zerafa@ingv.it'
 REQUIRES_PYTHON = '>=3.8.0'
 PYTHON_CODE_PREFIX = 'scatcluster'
-
-readme_file = os.path.join(str(pathlib.Path(__file__).resolve().parent), 'README.md')
-with open(readme_file, 'r', encoding='utf8') as f:
-    long_description = f.read()
 
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
@@ -27,8 +21,6 @@ setup(
     author=AUTHOR,
     version='{{VERSION_PLACEHOLDER}}',
     description=DESCRIPTION,
-    long_description=long_description,
-    long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages('.'),
