@@ -87,3 +87,6 @@ autosummary_generate = True
 
 # Language
 language = "en"
+
+
+nbsphinx_allow_errors = True
