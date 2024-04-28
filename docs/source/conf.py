@@ -1,6 +1,7 @@
 import os
 import sys
 import sphinx_material
+
 from pkg_resources import DistributionNotFound, get_distribution
 
 # Fanciness to get version number
@@ -8,6 +9,9 @@ try:
     __version__ = get_distribution("scatcluster").version
 except DistributionNotFound:
     __version__ = "dev"
+
+# A GitHub personal access token is required, more info below
+rtds_action_github_token = os.environ["GITHUB_TOKEN"]
     
 # Path setup
 sys.path.insert(0, os.path.abspath('../../'))
