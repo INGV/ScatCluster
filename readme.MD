@@ -15,7 +15,7 @@ A workflow for clustering continuous time series with a deep scattering network.
 ## Installation
 Installation is achieved by following these instructions:
 
-1. Run the following command to build and install the INGV ScatCluster package `pip install scatcluster`
+`pip install scatcluster`
 
 ## Getting Started
 This code contains a *quick_start* section with notebooks that can be used to execute the workflow on Sardinia Data. The workflow contains 3 sections:
