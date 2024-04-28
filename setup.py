@@ -9,13 +9,9 @@ AUTHOR = 'christopher.zerafa@ingv.it'
 REQUIRES_PYTHON = '>=3.8.0'
 PYTHON_CODE_PREFIX = 'scatcluster'
 
-def readme():
-    repo_root = str(pathlib.Path(__file__).resolve().parent)
-    readme_file = os.path.join(repo_root, 'README.md')
-    with open(readme_file, 'r', encoding='utf8') as f:
-        long_description = f.read()
-        
-    return long_description
+readme_file = os.path.join(str(pathlib.Path(__file__).resolve().parent), 'README.md')
+with open(readme_file, 'r', encoding='utf8') as f:
+    long_description = f.read()
 
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
@@ -31,7 +27,7 @@ setup(
     author=AUTHOR,
     version='{{VERSION_PLACEHOLDER}}',
     description=DESCRIPTION,
-    long_description=readme(),
+    long_description=long_description,
     long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
@@ -40,7 +36,7 @@ setup(
     include_package_data=True,
     install_requires=REQUIRED,
     extras_require={'gpu': [*REQUIRED, *REQUIRED_GPU]},
-    license='Apache',
+    license='MIT',
     classifiers=[
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'Intended Audience :: Science/Research',
