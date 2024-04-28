@@ -21,6 +21,8 @@ setup(
     author=AUTHOR,
     version='{{VERSION_PLACEHOLDER}}',
     description=DESCRIPTION,
+    long_description=DESCRIPTION,
+    long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages('.'),
