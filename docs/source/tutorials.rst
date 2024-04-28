@@ -10,5 +10,4 @@ These series of notebook-based tutorials are designed to introduce the reader to
    The tutorials are designed to be run in a Jupyter notebook environment. If you are unfamiliar with Jupyter notebooks, please see the `Jupyter documentation <https://jupyter.readthedocs.io/en/latest/>`_ for more information.
 
 .. toctree::
-   :glob:
-   *
+   :maxdepth: 2
