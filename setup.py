@@ -1,4 +1,5 @@
 from setuptools import find_packages, setup
+from pathlib import Path
 
 NAME = 'scatcluster'
 DESCRIPTION = 'A workflow for clustering continuous time series with a deep scattering network.'
@@ -7,12 +8,9 @@ AUTHOR = 'christopher.zerafa@ingv.it'
 REQUIRES_PYTHON = '>=3.8.0'
 PYTHON_CODE_PREFIX = 'scatcluster'
 
-# # read the contents of your README file
-# from pathlib import Path
-# this_directory = Path(__file__).parent
-# LONG_DESCRIPTION = (this_directory / "README.md").read_text()
-
-
+# read the contents of your README file
+this_directory = Path(__file__).parent
+LONG_DESCRIPTION = (this_directory / "README.md").read_text()
 
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
@@ -28,7 +26,7 @@ setup(
     author=AUTHOR,
     version='{{VERSION_PLACEHOLDER}}',
     description=DESCRIPTION,
-    long_description=open('README.md').read(),
+    long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
