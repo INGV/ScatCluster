@@ -11,8 +11,6 @@ A workflow for clustering continuous time series with a deep scattering network.
 
 </div>
 
-testing publish to pypi
-
 ## Installation
 Installation is achieved by following these instructions:
 
