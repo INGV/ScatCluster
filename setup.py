@@ -8,12 +8,6 @@ AUTHOR = 'christopher.zerafa@ingv.it'
 REQUIRES_PYTHON = '>=3.8.0'
 PYTHON_CODE_PREFIX = 'scatcluster'
 
-repo_root = str(Path(__file__).resolve().parent)
-
-
-this_directory = Path(__file__).parent
-LONG_DESCRIPTION = (this_directory / "README.md").read_text()
-
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
     'nmmn', 'astropy', 'parse', 'scipy'
@@ -28,8 +22,6 @@ setup(
     author=AUTHOR,
     version='{{VERSION_PLACEHOLDER}}',
     description=DESCRIPTION,
-    long_description=LONG_DESCRIPTION,
-    long_description_content_type='text/markdown',
     python_requires=REQUIRES_PYTHON,
     url=URL,
     packages=find_packages('.'),
