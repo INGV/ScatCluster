@@ -1,6 +1,9 @@
 name: Docs
 on: [push, release]
 
+env:
+  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
 jobs:
   notebooks:
     name: "Build the notebooks for the docs"
