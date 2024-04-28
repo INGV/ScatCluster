@@ -10,9 +10,6 @@ try:
 except DistributionNotFound:
     __version__ = "dev"
 
-# A GitHub personal access token is required, more info below
-# rtds_action_github_token = os.environ["GITHUB_TOKEN"]
-    
 # Path setup
 sys.path.insert(0, os.path.abspath('../../'))
 
@@ -50,6 +47,7 @@ extensions = [
     'IPython.sphinxext.ipython_console_highlighting',
     'sphinx_copybutton',
     "nbsphinx",
+    "rtds_action"
 ]
 
 # favicons = [
@@ -119,6 +117,16 @@ html_sidebars = {
         "searchbox.html",
     ]
 }
+
+
+# The name of your GitHub repository
+rtds_action_github_repo = "INGV/ScatCluster"
+# A GitHub personal access token is required, more info below
+# rtds_action_github_token = os.environ["GITHUB_TOKEN"]
+# Whether or not to raise an error on Read the Docs if the
+# artifact containing the notebooks can't be downloaded (optional)
+rtds_action_error_if_missing = False
+
 
 extensions.append("sphinx_material")
 html_theme_path = sphinx_material.html_theme_path()
