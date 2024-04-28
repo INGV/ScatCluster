@@ -1,1 +1,3 @@
 jupytext
+nbconvert
+ipykernel
