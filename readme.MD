@@ -36,5 +36,9 @@ If GPU is required, ensure that cupy>=11.3.0 is available.
 
 Additional dependencies are available within `requirements.txt`.
 
+## Documentation
+
+Please check the [documentation](https://scatcluster.readthedocs.io/en/latest/). You can find tutorials in the form of notebooks.
+
 ## Question and Issues
 Should you have any issues with this code, you can reach out on christopher.zerafa@ingv.it or carlo.giunchi@ingv.it
