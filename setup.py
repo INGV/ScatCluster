@@ -1,12 +1,5 @@
-import os
-import pathlib
-
-from setuptools import find_packages
-
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from pathlib import Path
+from setuptools import find_packages, setup
 
 NAME = 'scatcluster'
 DESCRIPTION = 'A workflow for clustering continuous time series with a deep scattering network.'
@@ -15,11 +8,11 @@ AUTHOR = 'christopher.zerafa@ingv.it'
 REQUIRES_PYTHON = '>=3.8.0'
 PYTHON_CODE_PREFIX = 'scatcluster'
 
-repo_root = str(pathlib.Path(__file__).resolve().parent)
+repo_root = str(Path(__file__).resolve().parent)
 
-README_FILE = os.path.join(repo_root, 'README.md')
-with open(README_FILE, 'r', encoding='utf8') as f:
-    LONG_DESCRIPTION = f.read()
+
+this_directory = Path(__file__).parent
+LONG_DESCRIPTION = (this_directory / "README.md").read_text()
 
 REQUIRED = [
     'tqdm', 'obspy>=1.4.0', 'scatseisnet>=0.2.1', 'pandas', 'seaborn', 'fastcluster', 'scikit-learn==1.2.2', 'click',
