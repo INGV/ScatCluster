@@ -50,9 +50,9 @@ extensions = [
     "rtds_action"
 ]
 
-# favicons = [
-#     "logo_scatseisnet_notext.png",
-# ]
+favicons = [
+    "scatcluster_no_text.png",
+]
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
@@ -99,24 +99,12 @@ autosummary_generate = True
 # Theme options are theme-specific and customize the look and feel of a theme
 # further. For a list of options available for each theme, see the
 # documentation.
-# html_logo = "_static/logo_scatseisnet_notext.png"
+html_logo = "_static/scatcluster_no_text.png"
 
 # Language
 language = 'en'
 
 nbsphinx_allow_errors = True
-
-
-# HTML theme
-html_show_sourcelink = False
-html_sidebars = {
-    "**": [
-        "logo-text.html",
-        "globaltoc.html",
-        "localtoc.html",
-        "searchbox.html",
-    ]
-}
 
 
 # The name of your GitHub repository
@@ -144,9 +132,15 @@ html_theme_options = {
     "globaltoc_depth": 1,
     "globaltoc_collapse": False,
     "globaltoc_includehidden": False,
-    "heroes": {
-        "index": "Don't save executed Jupyter notebooks to your git repos "
-        "ever again!"
-    },
     "nav_links": [],
+}
+# HTML theme
+html_show_sourcelink = False
+html_sidebars = {
+    "**": [
+        "logo-text.html",
+        "globaltoc.html",
+        "localtoc.html",
+        "searchbox.html",
+    ]
 }
