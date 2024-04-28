@@ -127,3 +127,17 @@ jobs:
       with:
         repository-url: https://test.pypi.org/legacy/
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+
+  publish-to-conda:
+    name: Publish conda package to Anaconda
+    needs: 
+    - github-release
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: publish-to-conda
+      uses: fcakyon/conda-publish-action@master
+      with:
+        subdir: 'conda'
+        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
+        platforms: 'win osx linux'
