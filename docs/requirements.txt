@@ -5,13 +5,13 @@ numpy
 numpydoc
 pydata_sphinx_theme
 pygments
+rtds_action
 scipy
 sphinx==7.1.2
 sphinx-rtd-theme==1.3.0rc1
 sphinx_autoapi
+sphinx_copybutton
 sphinx_design
 sphinx_favicon
 sphinx_gallery
 sphinx_material
-sphinx_copybutton
-rtds_action
