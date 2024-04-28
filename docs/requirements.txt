@@ -13,3 +13,4 @@ sphinx_design
 sphinx_favicon
 sphinx_gallery
 sphinx_material
+sphinx_copybutton
