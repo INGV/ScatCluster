@@ -19,9 +19,11 @@ jobs:
     - name: Extract tag name
       id: tag
       run: echo ::set-output name=TAG_NAME::$(echo $GITHUB_REF | cut -d / -f 3)
-    - name: Update version in setup.py and conda/meta.yaml
+    - name: Update version in setup.py
       run: >-
         sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" setup.py
+    - name: Update version in conda/meta.yaml
+      run: >-        
         sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" conda/meta.yaml
     - name: Install pypa/build
       run: >-
