@@ -1,6 +1,16 @@
 # INGV ScatCluster
 A workflow for clustering continuous time series with a deep scattering network.
 
+<div align=center>
+
+<!-- <img src=docs/source/_static/logo_scatseisnet.png width=250px/> -->
+
+[![Python Version](https://img.shields.io/pypi/pyversions/scatcluster)](https://pypi.org/project/INGV/scatcluster/)
+[![PyPI Version](https://img.shields.io/pypi/v/scatcluster.svg)](https://pypi.org/project/scatcluster/)\
+![GitHub last commit](https://img.shields.io/github/last-commit/INGV/scatcluster)
+
+</div>
+
 ## Installation
 Installation is achieved by following these instructions:
 
