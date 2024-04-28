@@ -1,14 +1,1 @@
-astropy
-click
-cupy>=11.3.0
-fastcluster
-nmmn
-obspy>=1.4.0
-pandas
-parse
-scatseisnet>=0.2.1
-scikit-learn==1.2.2
-scipy
-seaborn
-tqdm
 jupytext
