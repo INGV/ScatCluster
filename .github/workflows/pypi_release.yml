@@ -24,7 +24,7 @@ jobs:
         sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" setup.py
     - name: Update version in conda/meta.yaml
       run: >-        
-        sed -i "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" conda/meta.yaml
+        find ./conda/*.yaml -type f -exec sed -i -e "s/{{VERSION_PLACEHOLDER}}/${{ steps.tag.outputs.TAG_NAME }}/g" {} \
     - name: Install pypa/build
       run: >-
         python3 -m
