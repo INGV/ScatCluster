@@ -21,14 +21,14 @@ jobs:
           python -m pip install -U pip
           python -m pip install -r .github/workflows/requirements_docs.txt
 
-      # - name: Execute the notebooks
-      #   run: |
-      #     jupytext --to ipynb --execute docs/source/tutorials/*.ipynb
+      - name: Execute the notebooks
+        run: |
+          jupytext --to ipynb --execute docs/source/gett_started/*.ipynb
 
-      # - uses: actions/upload-artifact@v2
-      #   with:
-      #     name: notebooks-for-${{ github.sha }}
-      #     path: docs/source/tutorials
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/source/gett_started
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1
