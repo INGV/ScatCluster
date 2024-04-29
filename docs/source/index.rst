@@ -23,8 +23,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   getting_started
    usage
+   getting_started
 
 About
 -----
