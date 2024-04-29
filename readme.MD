@@ -54,7 +54,7 @@ Thank you for your interest in contributing to this project! Here are some guide
 
 4. Make sure your changes work as intended and do not introduce new bugs or problems. Write __tests__ if applicable.
 
-5. __Document__ your changes with following the [numpydoc](https://numpydoc.readthedocs.io/en/latest/format.html) format. This step is important to ensure that the package documentation is up to date and complete. If you are not sure about this step, we can help you.
+5. __Document__ your changes with following the [numpydoc](https://numpydoc.readthedocs.io/en/latest/format.html) format. This step is important to ensure that the package documentation is up-to-date and complete. If you are not sure about this step, we can help you.
 
 6. When you are ready to submit your changes, create a __pull request__ from your branch to the main branch of the original repository. Provide a clear description of your changes and why they are necessary, and we will review your contribution.
 

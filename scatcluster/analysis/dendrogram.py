@@ -259,9 +259,6 @@ class Dendrogram:
         attributes `data_network`, `data_station`, `data_location`, `network_name`, and `ica_number_components` of
         the instance. The file path is constructed using the `data_savepath` attribute of the instance.
 
-        Parameters:
-            None
-
         """
         print(f'Loading linkage for {self.data_network}_{self.data_station}_{self.data_location}_'
               f'{self.network_name}_ICA_{self.ica_number_components}_linkage.npy')
@@ -518,7 +515,7 @@ class Dendrogram:
                 labels=None,
             )
 
-        # Extract informations
+        # Extract information
         coordinates, _ = get_leaves(dendrogram_infos, ax)
 
         # leave population
@@ -587,7 +584,7 @@ class Dendrogram:
             # Cluster coordinates (scipy-enforced)
             yshift = (cluster - 1) * 10 + 5
 
-            # Population size
+            # Population
             # size = np.sum(predictions == cluster)
 
             # Get samples for which the class is the current one in the loop
@@ -626,7 +623,7 @@ class Dendrogram:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
 
-            # Extract best waveforms timestamps
+            # Extract the best waveforms timestamps
             _waveforms_n_samples = 5
             distances_argsort = np.argsort(distances)
             sorted_times = cluster_times[distances_argsort][:_waveforms_n_samples]

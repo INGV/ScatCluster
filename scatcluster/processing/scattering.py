@@ -50,9 +50,6 @@ class Scattering:
         `{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_`
         `{self.network_name}_times.npy` and stores them in the `data_times` attribute.
 
-        Parameters:
-            None
-
         """
         self.data_times = np.load(
             f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
@@ -184,7 +181,7 @@ class Scattering:
         plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
                     f'{self.network_name}_filter_banks.png')
 
-    def load_sample_data(self) -> None:
+    def load_sample_data(self) -> Stream:
         """Load sample
         """
         return self.load_data(starttime=UTCDateTime(self.data_sample_starttime),
@@ -418,9 +415,6 @@ class Scattering:
     def preload_times(self):
         """
         Preloads the times data from a numpy file and assigns it to the `data_times` attribute of the class.
-
-        Parameters:
-            None
 
         """
         data_times = np.load(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'

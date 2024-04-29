@@ -84,7 +84,7 @@ class ICA:
         ica_model_path = (f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
                           f'{self.network_name}_dimension_{num_ICA}.pickle')
         # check if reduction exists already
-        if (os.path.exists(ica_model_path) and self.ica_overwrite_previous_models is False):
+        if os.path.exists(ica_model_path) and self.ica_overwrite_previous_models is False:
             print('  Using pre-calculated model')
             model = pickle.load(open(ica_model_path, 'rb'))
         else:
@@ -161,7 +161,7 @@ class ICA:
         ica_min_ICAs = 6 if self.ica_min_ICAs is None else self.ica_min_ICAs
         ica_max_ICAs = 20 if self.ica_max_ICAs is None else self.ica_max_ICAs
         num_ICA = ica_min_ICAs - 1
-        while (score_exp_var <= self.ica_ev_limit and num_ICA < ica_max_ICAs):
+        while score_exp_var <= self.ica_ev_limit and num_ICA < ica_max_ICAs:
             num_ICA += 1
             score_exp_var, _, model, features = self.process_ICA_single(num_ICA=num_ICA,
                                                                         return_data=True,

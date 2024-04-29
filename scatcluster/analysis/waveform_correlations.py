@@ -45,7 +45,7 @@ class WaveformCorrelations:
         # sort_type = ['all', 'xcorr_filter', 'distance_filter']
 
         df_times = df_preds.loc[df_preds.predictions == cluster, ['cluster_rank', 'times_YYYYMMDD']]
-        time_list = list(df_times.sort_values(by='cluster_rank')['times_YYYYMMDD'].values)
+        time_list = df_times.sort_values(by='cluster_rank')['times_YYYYMMDD'].to_list()
 
         if sort_type == 'distance_filter':
             if sort_filter is None:
@@ -174,7 +174,7 @@ class WaveformCorrelations:
 
         Returns:
             numpy.ndarray or None: The stacked correlations for the given cluster, or None if the cluster is not
-                present in the correlations dictionary.
+                present in the correlations' dictionary.
         """
         if correlations[cluster] is None:
             return None

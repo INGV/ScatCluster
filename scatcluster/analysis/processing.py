@@ -10,7 +10,7 @@ from obspy import Stream
 from tqdm import tqdm
 
 
-class AnalysisProcessing():
+class AnalysisProcessing:
 
     def process_stream_envelope(self, stream: Stream) -> Stream:
         st_env = stream.copy()
@@ -19,7 +19,7 @@ class AnalysisProcessing():
 
         return st_env
 
-    def process_stream_rms(self, stream: Stream) -> Stream:
+    def process_stream_rms(self, stream: Stream) -> list:
         return [np.sqrt(np.mean(tr.data**2)) for tr in stream]
 
     def build_waveforms_data(self, include_envelopes=False, include_RMS=False, custom_title=''):
@@ -32,7 +32,7 @@ class AnalysisProcessing():
             custom_title (str): Custom title to append to the waveforms file.
 
         Returns:
-            numpy.ndarray: Array containing the waveforms data.
+            numpy.ndarray: Array containing the waveforms' data.
         """
         waveforms_file = (f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
                           f'{self.network_segment}_waveforms{custom_title}.npy')

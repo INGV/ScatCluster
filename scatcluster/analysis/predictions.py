@@ -81,7 +81,7 @@ class Predictions:
                     distances.append(euclidean(sample, centroid))
                 distances = np.array(distances)
 
-                # Sort times based on within cluster euclidean distance
+                # Sort times based on within cluster Euclidean distance
                 distances_argsort = np.argsort(distances)
                 sorted_times = cluster_times[distances_argsort]
                 print(f'Processing cluster {cluster} of size {len(sorted_times)}')

@@ -53,7 +53,7 @@ class Waveforms:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
 
-            # Extract best waveforms timestamps
+            # Extract the best waveforms timestamps
             _waveforms_n_samples = 5 if waveforms_n_samples is None else waveforms_n_samples
             distances_argsort = np.argsort(distances)
             sorted_times = cluster_times[distances_argsort][:_waveforms_n_samples]
@@ -131,7 +131,7 @@ class Waveforms:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
 
-            # Extract best waveforms timestamps
+            # Extract the best waveforms timestamps
 
             distances_argsort = np.argsort(distances)
             sorted_times = cluster_times[distances_argsort][:_waveforms_n_samples]

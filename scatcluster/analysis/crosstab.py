@@ -212,7 +212,7 @@ class SSNCrossTabAnalysis:
                 labels=None,
             )
 
-        # Extract informations
+        # Extract information
         coordinates, _ = get_leaves(dendrogram_infos, ax)
 
         # leave population

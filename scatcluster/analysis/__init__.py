@@ -1,1 +1,1 @@
-'Analysis init'
+"""Analysis init"""

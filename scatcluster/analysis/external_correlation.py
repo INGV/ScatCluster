@@ -213,7 +213,7 @@ class ExternalCorrelation:
         Calculates the external correlation between the smoothed and scaled clusters and the weather data.
 
         Parameters:
-            df_clusters_smoothed (pd.DataFrame): The smoothed clusters data.
+            df_clusters_smoothed (pd.DataFrame): The smoothed-clusters data.
             df_weather_smoothed_scaled (pd.DataFrame): The smoothed and scaled weather data.
             target_cols (list): The list of target columns to calculate the correlation for.
 
@@ -262,7 +262,7 @@ class ExternalCorrelation:
         Plot the actual and predicted weather data for each target column.
 
         Parameters:
-            df_clusters_smoothed (DataFrame): The smoothed clusters data.
+            df_clusters_smoothed (DataFrame): The smoothed-clusters data.
             df_weather_smoothed_scaled (DataFrame): The smoothed and scaled weather data.
             REGRESSION (dict): A dictionary containing the regression models for each target column.
             target_cols (list): A list of target columns.
@@ -299,7 +299,7 @@ class ExternalCorrelation:
 
         Parameters:
             target_cols (list): A list of target columns.
-            df_clusters_smoothed (DataFrame): The smoothed clusters data.
+            df_clusters_smoothed (DataFrame): The smoothed-clusters data.
             df_weather_smoothed_scaled (DataFrame): The smoothed and scaled weather data.
             REGRESSION (dict): A dictionary containing the regression models for each target column.
 
@@ -361,7 +361,7 @@ class ExternalCorrelation:
         Plots the regression coefficients for the specified target columns.
 
         Parameters:
-            df_clusters_smoothed (DataFrame): The smoothed clusters data.
+            df_clusters_smoothed (DataFrame): The smoothed-clusters data.
             df_weather_smoothed_scaled (DataFrame): The smoothed and scaled weather data.
             REGRESSION (dict): A dictionary containing the regression models for each target column.
             SCORE (dict): A dictionary containing the scores for each regression model.
