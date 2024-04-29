@@ -23,12 +23,12 @@ jobs:
 
       - name: Execute the notebooks
         run: |
-          jupytext --to ipynb --execute docs/source/gett_started/*.ipynb
+          jupytext --to ipynb --execute docs/source/getting_started/*.ipynb
 
       - uses: actions/upload-artifact@v2
         with:
           name: notebooks-for-${{ github.sha }}
-          path: docs/source/gett_started
+          path: docs/source/getting_started
 
       - name: Trigger RTDs build
         uses: dfm/rtds-action@v1
