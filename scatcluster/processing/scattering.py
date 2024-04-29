@@ -70,12 +70,11 @@ class Scattering:
         Returns:
             Trace: process obspy trace
         """
-        # trace.decimate(2)
+        trace.decimate(2)
         trace.detrend('linear')
-        # trace.filter(type="highpass", freq=1)
+        trace.filter(type="highpass", freq=1)
         trace.detrend('demean')
         trace.taper(0.05)
-
         return trace
 
     def load_data(self, starttime: UTCDateTime, endtime: UTCDateTime, channel: str) -> Stream:
