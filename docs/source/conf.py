@@ -79,7 +79,7 @@ html_context = {
 
 # Options for AutoAPI
 autoapi_type = 'python'
-autoapi_dirs = ['../../src/scatcluster']
+autoapi_dirs = ['../../scatcluster']
 autosummary_generate = True
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -93,12 +93,12 @@ language = 'en'
 nbsphinx_allow_errors = True
 
 # # The name of your GitHub repository
-rtds_action_github_token = os.environ['GITHUB_TOKEN']
-rtds_action_github_repo = 'INGV/ScatCluster'
+# rtds_action_github_token = os.environ['GITHUB_TOKEN']
+# rtds_action_github_repo = 'INGV/ScatCluster'
 # # A GitHub personal access token is required, more info below
 # # Whether or not to raise an error on Read the Docs if the
 # # artifact containing the notebooks can't be downloaded (optional)
-rtds_action_error_if_missing = False
+# rtds_action_error_if_missing = False
 
 # extensions.append('sphinx_material')
 # html_theme_path = sphinx_material.html_theme_path()
