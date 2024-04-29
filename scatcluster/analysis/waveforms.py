@@ -1,3 +1,4 @@
+"""Analysis Waveforms module."""
 import datetime
 from glob import glob
 from typing import List
@@ -16,12 +17,15 @@ from scatcluster.helper import COLORS, is_gpu
 class Waveforms:
 
     def plot_waveforms_per_cluster(self, clusters: List[int] = None, waveforms_n_samples: int = None, **kwargs):
-        """Visualise Waveforms for a All or a select number of clusters.
+        """
+        Visualise Waveforms for All or a select number of clusters.
 
         Args:
             clusters (List[int], optional): If specified, only plot waveforms for clusters in list of integers.
             For example, clusters = [1,3] will produce waveforms for cluster 1 and 3 only.
             Defaults to None will produce waveforms for all clusters.
+            waveforms_n_samples (int, optional): Number of waveforms to plot. Defaults to None.
+            **kwargs: Additional keyword arguments to pass to plt.subplots().
         """
         # get channel list from plotting
         stream = self.load_data(starttime=UTCDateTime(self.data_sample_starttime),
@@ -44,7 +48,7 @@ class Waveforms:
 
             # Centroid
             centroid = np.median(cluster_samples, axis=0)
-            distances = list()
+            distances = []
             for sample in cluster_samples:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
@@ -57,7 +61,7 @@ class Waveforms:
             kwargs['figsize'] = (20, 8) if kwargs.get('figsize') is None else kwargs.get('figsize')
             _, ax = plt.subplots(1, 4, gridspec_kw={'width_ratios': [2, 2, 2, 1]}, **kwargs)
             for ch, channel in enumerate(channel_list):
-                yticks = list()
+                yticks = []
                 for index, t in enumerate(sorted_times):
                     start = obspy.UTCDateTime(t)
                     end = start + self.network_segment
@@ -77,17 +81,32 @@ class Waveforms:
                                            depth=len(np.unique(self.dendrogram_predictions)))
             ax[3].set_title('Dendrogram')
             self._set_share_axes(axs=ax[:2], sharex=True, sharey=True)
-            plt.suptitle(
-                f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clustering_{clusters}\nCluster {cluster}'
-            )
+            plt.suptitle(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_'
+                         f'{self.ica.n_components}_clustering_{clusters}\nCluster {cluster}')
 
             plt.savefig(
-                f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clustering_{clusters}_waveforms_cluster_{cluster}.png'
+                f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                f'{self.network_name}_ICA_{self.ica.n_components}_clustering_{clusters}_waveforms_cluster_{cluster}.png'
             )
 
             plt.show()
 
     def plot_all_waveforms(self, channel='HHZ', waveforms_n_samples=3, **kwargs):
+        """
+        Plots waveforms for all or a select number of clusters.
+
+        Args:
+            channel (str, optional): The channel to plot waveforms for. Defaults to 'HHZ'.
+            waveforms_n_samples (int, optional): The number of waveforms to plot. Defaults to 3.
+            **kwargs: Additional keyword arguments to pass to plt.subplots().
+
+        Prints:
+            Trace is not available between {start}-{end} for supplied parametrization
+
+        Saves:
+            A figure of waveforms for all clusters as a PNG file.
+
+        """
         classes = np.unique(self.dendrogram_predictions)
         _waveforms_n_samples = 5 if waveforms_n_samples is None else waveforms_n_samples
         kwargs['figsize'] = (20, 8) if kwargs.get('figsize') is None else kwargs.get('figsize')
@@ -107,7 +126,7 @@ class Waveforms:
 
             # Centroid
             centroid = np.median(cluster_samples, axis=0)
-            distances = list()
+            distances = []
             for sample in cluster_samples:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
@@ -135,19 +154,31 @@ class Waveforms:
                     print(f'Trace is not available between {start}-{end} for supplied parametrization')
 
             ax[0, cluster_enum].set_title(f'Cluster {cluster}')
-        [axc.set_axis_off() for axr in ax for axc in axr]
+        _ = [axc.set_axis_off() for axr in ax for axc in axr]
         plt.subplots_adjust(wspace=0, hspace=0)
-        plt.suptitle(
-            f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clustering_{len(classes)}'
-        )
+        plt.suptitle(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_'
+                     f'{self.ica.n_components}_clustering_{len(classes)}')
 
         plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clustering_{len(classes)}_all_clusters_waveforms.png'
-        )
+            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICA_{self.ica.n_components}_clustering_{len(classes)}_all_clusters_waveforms.png')
 
         plt.show()
 
     def get_waveform(self, start_time='2022-01-01T00:00:00+00:00', time_second=60, channel='HHZ', envelope=False):
+        """
+        Retrieves a waveform from the data source within a specified time range and channel.
+
+        Args:
+            start_time (str, optional): The start time of the waveform in ISO format.
+                Defaults to '2022-01-01T00:00:00+00:00'.
+            time_second (int, optional): The duration of the waveform in seconds. Defaults to 60.
+            channel (str, optional): The channel of the waveform. Defaults to 'HHZ'.
+            envelope (bool, optional): Whether to process the waveform with the envelope function. Defaults to False.
+
+        Returns:
+            obspy.core.stream.Stream: The waveform data as an ObsPy Stream object.
+        """
         time_start = UTCDateTime(str(start_time))
         time_end = UTCDateTime(str(start_time)) + datetime.timedelta(seconds=time_second)
         wvf = self.load_data(starttime=time_start, endtime=time_end, channel=channel)
@@ -161,6 +192,21 @@ class Waveforms:
                              num_channels=3,
                              scat_vec_size_first_order=16,
                              scat_vec_size_second_order=(16, 7)):
+        """
+        Retrieves the scattering vector from the given `scat_coef_vectorized` array at the specified
+            `scat_coef_vectorized_index`.
+
+        Args:
+            scat_coef_vectorized (ndarray): The array containing the scattering coefficients.
+            scat_coef_vectorized_index (int): The index of the scattering coefficient vector to retrieve.
+            num_channels (int, optional): The number of channels. Defaults to 3.
+            scat_vec_size_first_order (int, optional): The size of the first-order scattering vector. Defaults to 16.
+            scat_vec_size_second_order (tuple, optional): The size of the second-order scattering vector.
+                Defaults to (16, 7).
+
+        Returns:
+            tuple: A tuple containing the first-order scattering vector and the second-order scattering vector.
+        """
         scat_vec = scat_coef_vectorized[scat_coef_vectorized_index, :]
         scat_vec_first_order = scat_vec[:(num_channels * scat_vec_size_first_order)].reshape(
             num_channels, scat_vec_size_first_order)
@@ -169,13 +215,41 @@ class Waveforms:
         return scat_vec_first_order, scat_vec_second_order
 
     def process_waveforms_envelopes_scat_coefficients(self, df_preds):
+        """
+        Process waveforms, envelopes, and scattering coefficients.
+
+        This function takes in a DataFrame `df_preds` containing predictions and processes waveforms, envelopes, and
+        scattering coefficients. It loads the scattering coefficient vectorized data using the
+        `load_scat_coef_vectorized` method. It then retrieves the scattering coefficient file list based on the data
+        savepath, data network, data station, data location, and network name. It loads the first scattering coefficient
+         file from the file list and prints the shape of the first-order and second-order scattering coefficient arrays.
+
+        It calculates the number of channels, first-order scattering vector size, and second-order scattering vector
+        size based on the shape of the scattering coefficient arrays.
+
+        It creates a list of scattering vectors by iterating over the indices of `df_preds` and calling the
+        `retreive_scat_vector` method with the scattering coefficient vectorized data, the current index, the number of
+        channels, first-order scattering vector size, and second-order scattering vector size.
+
+        It creates a DataFrame `df_scat_vec` with columns 'scat_vec_first_order' and 'scat_vec_second_order', where the
+        values are obtained from the scattering vector list by extracting the first-order and second-order scattering
+        vectors respectively.
+
+        Finally, it returns the `df_scat_vec` DataFrame.
+
+        Parameters:
+        - df_preds (pandas.DataFrame): The DataFrame containing predictions.
+
+        Returns:
+        - df_scat_vec (pandas.DataFrame): The DataFrame with columns 'scat_vec_first_order' and 'scat_vec_second_order'.
+        """
         self.load_scat_coef_vectorized()
         file_list = glob(
-            f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_scatterings_*.npz'
-        )
+            f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_scatterings_*.npz')
         scat_file = np.load(file_list[0])
-        print(f"First order : {scat_file['scat_coef_0'].shape[1:]}")
-        print(f"Second order : {scat_file['scat_coef_1'].shape[1:]}")
+        print(f"First order: {scat_file['scat_coef_0'].shape[1:]}")
+        print(f"Second order: {scat_file['scat_coef_1'].shape[1:]}")
 
         num_channels = scat_file['scat_coef_0'].shape[1:][0]
         first_order = scat_file['scat_coef_0'].shape[1:][1]
@@ -197,6 +271,16 @@ class Waveforms:
         df_preds,
         df_scat_vec,
     ):
+        """
+        Merge the DataFrames `df_preds` and `df_scat_vec` along the columns axis.
+
+        Parameters:
+        - df_preds (pandas.DataFrame): The DataFrame containing predictions.
+        - df_scat_vec (pandas.DataFrame): The DataFrame containing scattering coefficients.
+
+        Returns:
+        - merged_df (pandas.DataFrame): The merged DataFrame with columns from `df_preds` and `df_scat_vec`.
+        """
         return pd.concat([df_preds, df_scat_vec], axis=1)
 
     def plot_waveforms_envelopes_scat_coefficients(self,
@@ -205,11 +289,24 @@ class Waveforms:
                                                    num_waveforms: int = 5,
                                                    num_scat_coeff_stacking: int = 10,
                                                    GPU: bool = is_gpu()):
+        """
+        Plot waveforms, envelopes, and scattering coefficients for different clusters.
+
+        Parameters:
+        - df_pred_scat_vec (pandas.DataFrame): DataFrame with predictions and scattering coefficients.
+        - channel (str): The channel to plot waveforms for (default is 'HHZ').
+        - num_waveforms (int): Number of waveforms to plot (default is 5).
+        - num_scat_coeff_stacking (int): Number of scattering coefficients to stack (default is 10).
+        - GPU (bool): Flag indicating if GPU is used for processing (default is determined by `is_gpu()`).
+
+        Returns:
+        None
+        """
         if GPU:
             self.net.banks[0].centers = self.net.banks[0].centers.get()
             self.net.banks[1].centers = self.net.banks[2].centers.get()
 
-        fig, ax = plt.subplots(len(set(df_pred_scat_vec.predictions)), 4, figsize=(20, 10), sharex='col', sharey='col')
+        _, ax = plt.subplots(len(set(df_pred_scat_vec.predictions)), 4, figsize=(20, 10), sharex='col', sharey='col')
 
         sv1_mean = np.mean(np.array([sv1[2, :] for sv1 in df_pred_scat_vec.scat_vec_first_order]), axis=0)
         sv2_mean = np.mean(np.array([sv2[2, :, :] for sv2 in df_pred_scat_vec.scat_vec_second_order]), axis=0)
@@ -307,7 +404,8 @@ class Waveforms:
                 im = ax[cluster_enum, 3].imshow(sv2_array, aspect='auto', cmap='RdYlBu')
                 plt.colorbar(im, ax=ax[cluster_enum, 3])
 
-        filename = f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_Clustering_{len(num_clusters)}_Xcorr_ScatCoeff'
+        filename = (f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_'
+                    f'{self.ica.n_components}_Clustering_{len(num_clusters)}_Xcorr_ScatCoeff')
         plt.suptitle(filename)
         plt.savefig(f'{self.data_savepath}figures/{filename}.png', bbox_inches='tight')
         plt.show()

@@ -1,3 +1,6 @@
+"""
+Configuration file for the Sphinx documentation builder.
+"""
 import os
 import sys
 
@@ -16,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 # Project information
 project = 'scatcluster'
 author = 'Christopher Zerafa and Carlo Giunchi'
-copyright = '2024, ' + author
+copyright = '2024, ' + author  # pylint: disable=redefined-builtin
 
 version = __version__
 release = __version__
@@ -33,8 +36,7 @@ extensions = [
     'sphinx.ext.duration', 'sphinx.ext.doctest', 'sphinx.ext.autodoc', 'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx', 'sphinx.ext.napoleon', 'sphinx.ext.viewcode', 'sphinx_gallery.load_style',
     'sphinx_favicon', 'sphinx_design', 'autoapi.extension', 'nbsphinx', 'numpydoc',
-    'IPython.sphinxext.ipython_console_highlighting', 'sphinx_copybutton', 'nbsphinx', 
-    'rtds_action'
+    'IPython.sphinxext.ipython_console_highlighting', 'sphinx_copybutton', 'nbsphinx', 'rtds_action'
 ]
 
 favicons = [
@@ -70,8 +72,8 @@ html_theme_options = {
     'monokai',
     'github_url':
     'https://github.com/INGV/ScatCluster',
-    'announcement':
-    'This is a beta release of the scatcluster package. Please report any issues you find <a href=https://github.com/INGV/ScatCluster/issues>in the GitHub repository</a>.',
+    'announcement': ('This is a beta release of the scatcluster package. Please report any issues '
+                     'you find <a href=https://github.com/INGV/ScatCluster/issues>in the GitHub repository</a>.'),
 }
 
 html_context = {

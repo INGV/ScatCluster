@@ -1,8 +1,10 @@
+"""Dendrogram analysis module."""
 import os
 from string import ascii_lowercase as letters
 from typing import Union
 
 import numpy as np
+import obspy
 import pandas as pd
 from dateutil import tz
 from fastcluster import linkage_vector
@@ -16,22 +18,27 @@ from scatcluster.helper import COLORS
 
 
 def get_leaves(dendrogram_info, ax):
-    """Get dendrogram list of leaves coordinates and colors.
+    """
+    Get dendrogram list of leaves coordinates and colors.
 
-    Arguments
-    ---------
-    d: dict
+    Parameters
+    ----------
+    dendrogram_info : dict
         Output of the scipy.hierarchy.dendrogram function.
+    ax : plt.Axes
+        The axes to draw the dendrogram into.
 
     Returns
     -------
-    coords, colors: array-like
-        The x coordinates and color of each leave.
+    leaves_coordinates: array-like
+        The x coordinates of each leave.
+    leaves_population_size: array-like
+        The population size of each leave.
     """
     # Extract coordinates of each leave (with a depth coordinate indexed 0)
     infos = (key for key in dendrogram_info)
     node_index, node_depth, *_ = (dendrogram_info[key] for key in infos)
-    leaves_coordinates = list()
+    leaves_coordinates = []
     for index, depth in zip(node_index, node_depth):
         if depth[0] == 0:
             leaves_coordinates.append(index[0])
@@ -40,7 +47,7 @@ def get_leaves(dendrogram_info, ax):
     leaves_coordinates = sorted(set(leaves_coordinates))
 
     # Cardinality
-    leaves_population_size = list()
+    leaves_population_size = []
     for label in ax.get_yticklabels():
         label = label.get_text()
         if '(' in label:
@@ -53,17 +60,18 @@ def get_leaves(dendrogram_info, ax):
 
 
 def get_prediction(linkage, population_size):
-    """Get cluster predection for each sample.
+    """
+    Get cluster predection for each sample.
 
     The dendrogram (or linkage) matrix sorts the samples per catergory.
     We revert that back to their correct time coordinate.
     Note: the clusters are labeled from 1 to n_clusters.
 
-    Arguments
-    ---------
-    linkage: np.ndarray
+    Parameters
+    ----------
+    linkage : np.ndarray
         Output of the linkage function.
-    population_size: list
+    population_size : list
         The size of every cluster
     """
     # This is getting all leaves = every samples
@@ -80,24 +88,16 @@ def get_prediction(linkage, population_size):
 
 
 def show_dendrogram(linkage, ax=None, depth=30):
-    """Show dendrogram and returns basic cluster informations.
+    """
+    Generate a dendrogram plot and return the cluster predictions.
 
-    Arguments
-    ---------
-    linkage: np.ndarray
-        Linkage matrix.
+    Parameters:
+        linkage (np.ndarray): The linkage matrix.
+        ax (matplotlib.axes.Axes, optional): The axes to plot the dendrogram on. Defaults to None.
+        depth (int, optional): The depth of the dendrogram. Defaults to 30.
 
-    Keyword arguments
-    -----------------
-    ax: plt.Axes
-        The axes to draw the dendrogram into.
-    depth: str
-        The dendrogram depth
-
-    Return
-    ------
-    prediction: np.ndarray
-        The cluster prediction per sample.
+    Returns:
+        np.ndarray: The cluster predictions for each sample.
     """
     # Generate axes
     ax = ax or plt.gca()
@@ -117,23 +117,35 @@ def show_dendrogram(linkage, ax=None, depth=30):
             labels=None,
         )
 
-    # Extract informations
+    # Extract information
     coordinates, population_sizes = get_leaves(dendrogram_infos, ax)
 
     predictions = get_prediction(linkage, population_sizes)
 
     # Plot leave nodes
-    node_style = dict(ms=5, mec='0.3', mew=0.7, clip_on=False)
+    node_style = {'ms': 5, 'mec': '0.3', 'mew': 0.7, 'clip_on': False}
     for coordinate, color, pop in zip(coordinates, COLORS, population_sizes):
         ax.plot(0, coordinate, 'o', mfc=color, **node_style)
         index = int((coordinate - 5) / 10) + 1
-        label = '{:d}\n{}\n{}%'.format(index, pop, int(round((pop / sum(population_sizes)) * 100, 0)))
+        label = f'{index:d}\n{pop}\n{int(round((pop / sum(population_sizes)) * 100, 0))}%'
         ax.text(0.1, coordinate, label, color=color, va='center')
 
     return predictions
 
 
 def dendrogram(linkage, times, n_clusters, n_cal_bins=150):
+    """
+    Generates a dendrogram plot and visualizes cluster properties for a given linkage matrix and times.
+
+    Parameters:
+        linkage (numpy.ndarray): The linkage matrix representing the hierarchical clustering.
+        times (numpy.ndarray): The array of times associated with each data point.
+        n_clusters (int): The number of clusters to show in the dendrogram.
+        n_cal_bins (int, optional): The number of calendar bins to use for calendar occurrences. Defaults to 150.
+
+    Returns:
+        tuple: A tuple containing the figure object and the predictions made by the dendrogram.
+    """
 
     # Deactivate axes basic properties
     spines_off = {
@@ -146,10 +158,10 @@ def dendrogram(linkage, times, n_clusters, n_cal_bins=150):
     }
 
     # Generate axes
-    gs = dict(width_ratios=[2, 4, 1, 2])
+    gs = {'width_ratios': [2, 4, 1, 2]}
     figsize = 6, n_clusters * 0.35
     with plt.rc_context(spines_off):
-        figure_kwargs = dict(sharey=True, figsize=figsize, gridspec_kw=gs)
+        figure_kwargs = {'sharey': True, 'figsize': figsize, 'gridspec_kw': gs}
         figure, axes = plt.subplots(1, 4, **figure_kwargs)
 
     # Calendar bins
@@ -186,8 +198,8 @@ def dendrogram(linkage, times, n_clusters, n_cal_bins=150):
         axes[2].fill_between(np.arange(24), y0, hours_counts, lw=0, step='post', color=color)
 
         # Population graph
-        bar_style = dict(height=3, color=color, ec='k', lw=0.5, align='edge')
-        text_style = dict(va='center', color=color, size='small')
+        bar_style = {'height': 3, 'color': color, 'ec': 'k', 'lw': 0.5, 'align': 'edge'}
+        text_style = {'va': 'center', 'color': color, 'size': 'small'}
         text_label = f' {size}'
         axes[-1].barh(y0, ratio, **bar_style)
         axes[-1].text(ratio, y0 + 1.8, text_label, **text_style)
@@ -234,25 +246,37 @@ class Dendrogram:
         """
         linkage = linkage_vector(self.ica_features, self.dendrogram_method, **kwargs)
         np.save(
-            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica_number_components}_linkage.npy',
-            linkage)
+            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICA_{self.ica_number_components}_linkage.npy', linkage)
 
         self.dendrogram_linkage = linkage
 
     def preload_linkage(self) -> None:
-        print(
-            f'Loading linkage for {self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica_number_components}_linkage.npy'
-        )
+        """
+        Load the linkage for the Dendrogram.
+
+        This function loads the linkage for the Dendrogram from a file. The file path is constructed using the
+        attributes `data_network`, `data_station`, `data_location`, `network_name`, and `ica_number_components` of
+        the instance. The file path is constructed using the `data_savepath` attribute of the instance.
+
+        Parameters:
+            None
+
+        """
+        print(f'Loading linkage for {self.data_network}_{self.data_station}_{self.data_location}_'
+              f'{self.network_name}_ICA_{self.ica_number_components}_linkage.npy')
         linkage = np.load(
-            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica_number_components}_linkage.npy'
-        )
+            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICA_{self.ica_number_components}_linkage.npy')
         self.dendrogram_linkage = linkage
 
     def single_dendrogram(self, n_clusters: int, print_predictions: bool = True) -> Union[np.ndarray, None]:
-        """Visualise a single Dendrogram based on n_cluster
+        """
+        Visualise a single Dendrogram based on n_cluster
 
         Args:
             n_clusters (int): The number of clusters to be identifed
+            print_predictions (bool, optional): Whether to print the predictions. Defaults to True.
 
         Returns:
             np.ndarray: An array with cluster defintion of all the data
@@ -285,10 +309,10 @@ class Dendrogram:
             'xtick.top': False,
             'ytick.left': False,
         }
-        gs = dict(width_ratios=[2, 4, 1, 2])
+        gs = {'width_ratios': [2, 4, 1, 2]}
         figsize = 10, n_clusters * 0.7
         with plt.rc_context(spines_off):
-            figure_kwargs = dict(sharey=True, figsize=figsize, gridspec_kw=gs)
+            figure_kwargs = {'sharey': True, 'figsize': figsize, 'gridspec_kw': gs}
             _, axes = plt.subplots(1, 4, **figure_kwargs)
 
         # Axes unpack
@@ -324,21 +348,21 @@ class Dendrogram:
             hourly_counts = hourly_counts / hourly_counts.max()
 
             # Population graph
-            bar_style = dict(height=3, color=color, ec='0.3', lw=0.5, align='edge')
-            text_style = dict(size=6, va='center', color=color)
+            bar_style = {'height': 3, 'color': color, 'ec': '0.3', 'lw': 0.5, 'align': 'edge'}
+            text_style = {'size': 6, 'va': 'center', 'color': color}
             text_label = f' {size}'
             ax_population.barh(yshift, ratio, **bar_style)
             ax_population.text(ratio, yshift + 1.5, text_label, **text_style)
 
             # Calendar graph
-            bar_style = dict(bottom=yshift, width=calendar_time_step, fc=color, align='edge')
-            step_style = dict(c='0.3', lw=0.5, where='post')
+            bar_style = {'bottom': yshift, 'width': calendar_time_step, 'fc': color, 'align': 'edge'}
+            step_style = {'c': '0.3', 'lw': 0.5, 'where': 'post'}
             ax_cal.bar(calendar_times[:-1], cal_counts * 5, **bar_style)
             ax_cal.step(calendar_times[:-1], cal_counts * 5 + yshift, **step_style)
 
             # Hourly graph
-            bar_style = dict(bottom=yshift, width=1, fc=color, align='edge')
-            step_style = dict(c='0.3', lw=0.5, where='post')
+            bar_style = {'bottom': yshift, 'width': 1, 'fc': color, 'align': 'edge'}
+            step_style = {'c': '0.3', 'lw': 0.5, 'where': 'post'}
             ax_hourly.bar(hourly, hourly_counts * 5, **bar_style)
             ax_hourly.step(hourly, hourly_counts * 5 + yshift, **step_style)
 
@@ -373,23 +397,22 @@ class Dendrogram:
         ax_hourly.set_xticklabels(hours_labels)
 
         # All-axes cosmetics
-        for ax, letter in zip(axes, letters):
+        for ax, _ in zip(axes, letters):
             ax.grid(clip_on=False)
             # ax.set_title(letter)
 
-        plt.suptitle(
-            f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_dendrogram_clusters_{n_clusters}'
-        )
+        plt.suptitle(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_'
+                     f'{self.ica.n_components}_dendrogram_clusters_{n_clusters}')
 
-        plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_dendrogram_clusters_{n_clusters}.png'
-        )
+        plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_name}_ICA_{self.ica.n_components}_dendrogram_clusters_{n_clusters}.png')
 
         plt.show()
 
         # Save predictions
         np.savez(
-            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz',
+            f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz',
             predictions=predictions,
             times=timestamps)
         if print_predictions:
@@ -411,15 +434,18 @@ class Dendrogram:
         Args:
             n_clusters (int): Number of clusters
         """
-        clusters_path = f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz'
+        clusters_path = (f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+                         f'{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz')
         if not os.path.exists(clusters_path):
             raise ValueError(
-                f'Clusters of size {n_clusters} does not exist. Kindly choose another n_clusters or compute using "single_dendrogram"'
-            )
+                f'Clusters of size {n_clusters} does not exist. Kindly choose another n_clusters or compute using '
+                f'"single_dendrogram"')
 
-        dendrogram_linkage_path = f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica_number_components}_linkage.npy'
+        dendrogram_linkage_path = (f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_'
+                                   f'{self.data_location}_{self.network_name}_ICA_{self.ica_number_components}_'
+                                   f'linkage.npy')
         if not os.path.exists(dendrogram_linkage_path):
-            raise ValueError(f'Dendrogram linkage does not exist. Kindly compute using "process_dendrogram_linkage"')
+            raise ValueError('Dendrogram linkage does not exist. Kindly compute using "process_dendrogram_linkage"')
 
         p = np.load(clusters_path)
         self.dendrogram_predictions = p['predictions']
@@ -427,6 +453,17 @@ class Dendrogram:
         self.dendrogram_linkage = np.load(dendrogram_linkage_path)
 
     def _set_share_axes(self, axs, target=None, sharex=False, sharey=False) -> None:
+        """
+        Sets the axes sharing properties for a given set of axes.
+
+        Parameters:
+            axs (numpy.ndarray): The array of axes to set the sharing properties for.
+            target (matplotlib.axes.Axes, optional): The target axes to share with. If not provided, the first axes
+                in the array will be used.
+            sharex (bool, optional): Whether to share the x-axis between the axes. Defaults to False.
+            sharey (bool, optional): Whether to share the y-axis between the axes. Defaults to False.
+
+        """
         if target is None:
             target = axs.flat[0]
         # Manage share using grouper objects
@@ -447,26 +484,15 @@ class Dendrogram:
                 ax.yaxis.offsetText.set_visible(False)
 
     def show_dendrogram_waveforms(self, linkage: np.array, ax: Axes, depth: int = 30):
-        """Show dendrogram on waveform plot.
-
-        Arguments
-        ---------
-        linkage: np.ndarray
-            Linkage matrix.
-
-        Keyword arguments
-        -----------------
-        ax: plt.Axes
-            The axes to draw the dendrogram into.
-        depth: str
-            The dendrogram depth
-
-        Return
-        ------
-        prediction: np.ndarray
-            The cluster prediction per sample.
         """
+        Generate a dendrogram plot of waveforms and return the leaf node coordinates and population labels.
 
+        Parameters:
+            linkage (np.array): The linkage matrix.
+            ax (matplotlib.axes.Axes): The axes to plot the dendrogram on.
+            depth (int, optional): The depth of the dendrogram. Defaults to 30.
+
+        """
         # Show and get dendrogram
         with plt.rc_context({'lines.linewidth': 0.7}):
             dendrogram_infos = hierarchy.dendrogram(linkage,
@@ -496,18 +522,25 @@ class Dendrogram:
         coordinates, _ = get_leaves(dendrogram_infos, ax)
 
         # leave population
-        pops = [x for x in R['ivl']]
+        pops = list(R['ivl'])
 
         # Plot leave nodes
-        node_style = dict(ms=5, mec='0.3', mew=0.7, clip_on=False)
+        node_style = {'ms': 5, 'mec': '0.3', 'mew': 0.7, 'clip_on': False}
         for coordinate, color, pop in zip(coordinates, COLORS, pops):
             ax.plot(0, coordinate, 'o', mfc=color, **node_style)
             index = int((coordinate - 5) / 10) + 1
-            label = '{:d} {}'.format(index, pop)
+            label = f'{index:d} {pop}'
             ax.text(-0.1, coordinate, label, color=color, va='center')
 
     def show_dendrogram_with_waveforms(self, n_clusters: int, experiment_name: str = ''):
+        """
+        Generates a dendrogram with waveforms for clustering analysis.
 
+        Parameters:
+            n_clusters (int): The number of clusters to generate.
+            experiment_name (str, optional): The name of the experiment. Defaults to an empty string.
+
+        """
         # Temporal vectors for histogram in time (calendar and hourly)
         timestamps = self.data_times.copy()  # mdates.date2num(times)
         if self.dendrogram_time_zone is not None:
@@ -532,10 +565,10 @@ class Dendrogram:
             'xtick.top': False,
             'ytick.left': False,
         }
-        gs = dict(width_ratios=[1, 4, 1, 5])
+        gs = {'width_ratios': [1, 4, 1, 5]}
         figsize = 15, n_clusters * 0.9
         with plt.rc_context(spines_off):
-            figure_kwargs = dict(sharey=True, figsize=figsize, gridspec_kw=gs)
+            figure_kwargs = {'sharey': True, 'figsize': figsize, 'gridspec_kw': gs}
             _, axes = plt.subplots(1, 4, **figure_kwargs)
 
         # Axes unpack
@@ -555,8 +588,7 @@ class Dendrogram:
             yshift = (cluster - 1) * 10 + 5
 
             # Population size
-            size = np.sum(predictions == cluster)
-            ratio = 100 * size / len(self.data_times)
+            # size = np.sum(predictions == cluster)
 
             # Get samples for which the class is the current one in the loop
             within_cluster = predictions == cluster
@@ -573,14 +605,14 @@ class Dendrogram:
             hourly_counts = hourly_counts / hourly_counts.max()
 
             # Calendar graph
-            bar_style = dict(bottom=yshift, width=calendar_time_step, fc=color, align='edge')
-            step_style = dict(c='0.3', lw=0.5, where='post')
+            bar_style = {'bottom': yshift, 'width': calendar_time_step, 'fc': color, 'align': 'edge'}
+            step_style = {'c': '0.3', 'lw': 0.5, 'where': 'post'}
             ax_cal.bar(calendar_times[:-1], cal_counts * 5, **bar_style)
             ax_cal.step(calendar_times[:-1], cal_counts * 5 + yshift, **step_style)
 
             # Hourly graph
-            bar_style = dict(bottom=yshift, width=1, fc=color, align='edge')
-            step_style = dict(c='0.3', lw=0.5, where='post')
+            bar_style = {'bottom': yshift, 'width': 1, 'fc': color, 'align': 'edge'}
+            step_style = {'c': '0.3', 'lw': 0.5, 'where': 'post'}
             ax_hourly.bar(hourly, hourly_counts * 5, **bar_style)
             ax_hourly.step(hourly, hourly_counts * 5 + yshift, **step_style)
 
@@ -589,7 +621,7 @@ class Dendrogram:
 
             # Centroid
             centroid = np.median(cluster_samples, axis=0)
-            distances = list()
+            distances = []
             for sample in cluster_samples:
                 distances.append(euclidean(sample, centroid))
             distances = np.array(distances)
@@ -646,7 +678,7 @@ class Dendrogram:
         plt.suptitle(experiment_name)
 
         plt.savefig(
-            f'{self.data_savepath}figures/02_dendrogram_{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_clusters_{n_clusters}_v2.png'
-        )
+            f'{self.data_savepath}figures/02_dendrogram_{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_clusters_{n_clusters}_v2.png')
 
         plt.show()

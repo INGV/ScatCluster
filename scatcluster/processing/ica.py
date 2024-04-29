@@ -1,3 +1,4 @@
+"""ICA processing module"""
 import os
 import pickle
 from glob import glob
@@ -18,12 +19,31 @@ from scatcluster.helper import demad, list_of_strings
 
 
 def round_nearest(x, a):
+    """
+    Rounds a number `x` to the nearest multiple of `a`.
+
+    Parameters:
+        x (float): The number to be rounded.
+        a (float): The multiple to round to.
+
+    Returns:
+        float: The rounded number.
+    """
     return round(x / a) * a
 
 
 class ICA:
 
     def _get_index_from_UTC_timestamp(self, utc_timestamp: str):
+        """
+        Get the index of the maximum value in the `data_times` list that is less than the given UTC timestamp.
+
+        Parameters:
+            utc_timestamp (str): The UTC timestamp to compare against the `data_times` list.
+
+        Returns:
+            int: The index of the maximum value in the `data_times` list that is less than the given UTC timestamp.
+        """
         df_time = pd.DataFrame({'time': self.data_times})
         return max(df_time.loc[
             df_time['time'] < mdates.date2num(UTCDateTime(utc_timestamp)),
@@ -35,17 +55,34 @@ class ICA:
                            exclude_timestamps: Optional[list[str]] = None,
                            exclude_timestamps_skip: int = 5,
                            **kwargs):
-        """Process the data for a single run of ICA. This will reduce to a dataset of dimension num_ICA.
+        """
+        Process the data for a single run of ICA. This function performs Independent Component Analysis
+        (ICA) for a specified number of components. It fits the ICA model to the provided data after
+        optionally excluding certain timestamps. The resulting features are then saved, and the model
+        can be optionally returned.
 
-        Args:
-            num_ICA (int): The number of dimensions to be reduced to.
-            return_data (bool, optional): Toggle to determine if the data should be returned as part of the function call. Defaults to False.
+        Parameters:
+            num_ICA (int): The number of Independent Components to reduce the data to.
+            return_data (bool): Flag indicating whether to return data after processing. Default is False.
+            exclude_timestamps (Optional[list[str]]): List of timestamps to exclude from the data before fitting.
+            exclude_timestamps_skip (int): The number of data points to skip for each excluded timestamp.
+            **kwargs: Additional keyword arguments that can be passed to the FastICA model.
 
         Returns:
-            _type_: _description_
+            Tuple: If return_data is True, it returns a tuple containing:
+                - The Explained Variance (%) of the ICA.
+                - The Mean Squared Error (MSE) of the ICA.
+                - The trained ICA model.
+                - The extracted features after transformation.
+
+        Side Effects:
+            - Saves the trained ICA model in a pickle file.
+            - Saves the features in a numpy .npz file.
+
         """
         print(f'Performing ICA for {num_ICA} ICAs')
-        ica_model_path = f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_dimension_{num_ICA}.pickle'
+        ica_model_path = (f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
+                          f'{self.network_name}_dimension_{num_ICA}.pickle')
         # check if reduction exists already
         if (os.path.exists(ica_model_path) and self.ica_overwrite_previous_models is False):
             print('  Using pre-calculated model')
@@ -63,8 +100,9 @@ class ICA:
         if exclude_timestamps is not None:
             for ts in exclude_timestamps:
                 print(
-                    f'Timestamp {UTCDateTime(ts)} - {UTCDateTime(ts) + (self.network_segment * exclude_timestamps_skip)} has been excluded from the Scaling fit and Model fit.'
-                )
+                    f'Timestamp {UTCDateTime(ts)} - '
+                    f'{UTCDateTime(ts) + (self.network_segment * exclude_timestamps_skip)} has been excluded from the '
+                    f'Scaling fit and Model fit.')
                 ts_index = self._get_index_from_UTC_timestamp(ts)
                 scat_coeff_data = np.delete(scat_coeff_data, np.s_[ts_index:ts_index + exclude_timestamps_skip], 0)
 
@@ -83,7 +121,7 @@ class ICA:
         features_inverse = model.inverse_transform(features)
         score_exp_var = explained_variance_score(scat_coeff_data_scaled, features_inverse)
         score_mse = mean_squared_error(scat_coeff_data_scaled, features_inverse)
-        print(f'      ICAs #{num_ICA} : Explained Variance {score_exp_var * 100:0.5f}% : MSE {score_mse:0.5f}')
+        print(f'      ICAs #{num_ICA}: Explained Variance {score_exp_var * 100:0.5f}%: MSE {score_mse:0.5f}')
 
         self.ica = model
         self.ica_number_components = num_ICA
@@ -96,7 +134,8 @@ class ICA:
 
         # save the features
         np.savez(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_features_{num_ICA}.npz',
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_features_{num_ICA}.npz',
             features=features,
             features_inverse=features_inverse,
             score_explained_variance=score_exp_var,
@@ -109,7 +148,14 @@ class ICA:
                           exclude_timestamps: Optional[list[str]] = None,
                           exclude_timestamps_skip: int = 3,
                           **kwargs) -> None:
-        """Process ICA dimension reduction for a range of possible dimensions controlled via ica_min_ICAs, ica_max_ICAs and ica_ev_limit.
+        """
+        Process a range of Independent Component Analysis (ICA).
+
+        Parameters:
+            exclude_timestamps (Optional[list[str]]): List of timestamps to exclude from the data.
+            exclude_timestamps_skip (int): The number of data points to skip for each excluded timestamp.
+            **kwargs: Additional keyword arguments.
+
         """
         score_exp_var = 0
         ica_min_ICAs = 6 if self.ica_min_ICAs is None else self.ica_min_ICAs
@@ -123,38 +169,37 @@ class ICA:
                                                                         exclude_timestamps_skip=exclude_timestamps_skip,
                                                                         **kwargs)
         if num_ICA == ica_max_ICAs:
-            print(
-                f'Failed to reach an explained variance of {self.ica_ev_limit* 100:0.5f} with a max number of {self.ica_max_ICAs} ICAs. Either increase the maximum number of ICAs or decrease the Explained Variance Limit.'
-            )
+            print(f'Failed to reach an explained variance of {self.ica_ev_limit * 100:0.5f} with a max number of '
+                  f'{self.ica_max_ICAs} ICAs. Either increase the maximum number of ICAs or decrease the Explained '
+                  f'Variance Limit.')
         else:
             print(f'Recommended number of ICAs {num_ICA}.\nThe Explained Variance with these ICAs is {score_exp_var}.')
 
         self.ica = model
         self.ica_number_components = num_ICA
         self.ica_features = features
-        print(f'Compressed Vectorised Scat. Coefficients Array after ICA : {features.shape}')
+        print(f'Compressed Vectorised Scat. Coefficients Array after ICA: {features.shape}')
 
     def preload_ICA(self, num_ICA: int) -> None:
-        """Load a pre-calculated ICA and set required variables
+        """
+        Load a pre-calculated ICA and set required variables
 
         Args:
             num_ICA (int): Desired number of ICAs
         """
-        if not os.path.exists(
-                f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_dimension_{num_ICA}.pickle'
-        ):
+        if not os.path.exists(f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
+                              f'{self.network_name}_dimension_{num_ICA}.pickle'):
             raise ValueError(
-                f"The supplied number of ICAs {num_ICA} has not been computed. Choose another number for the ICAs or calcate using 'process_ICA_single'"
-            )
+                f"The supplied number of ICAs {num_ICA} has not been computed. Choose another number for the ICAs or "
+                f"calcate using 'process_ICA_single'")
 
         self.ica = pickle.load(
             open(
-                f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_dimension_{num_ICA}.pickle',
-                'rb'))
+                f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
+                f'{self.network_name}_dimension_{num_ICA}.pickle', 'rb'))
 
-        ica_results = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_features_{num_ICA}.npz'
-        )
+        ica_results = np.load(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                              f'{self.network_name}_features_{num_ICA}.npz')
         self.ica_features = ica_results['features']
         self.ica_features_inverse = ica_results['features_inverse']
         self.ica_explained_variance_score = ica_results['score_explained_variance']
@@ -162,14 +207,15 @@ class ICA:
 
         self.ica_number_components = num_ICA
 
-        print(f'Compressed Vectorised Scat. Coefficients Array after ICA : {self.ica_features.shape}')
+        print(f'Compressed Vectorised Scat. Coefficients Array after ICA: {self.ica_features.shape}')
 
         self.data_times = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_times.npy'
-        )
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_times.npy')
 
     def plot_ICA(self, **kwargs) -> None:
-        """Visualise the ICAs
+        """
+        Visualise the ICAs
         """
         dimensions = self.ica_features.shape[1]
         # Preprocess
@@ -217,23 +263,31 @@ class ICA:
         ax.spines['left'].set_visible(False)
         ax.tick_params(axis='y', length=0)
         plt.title(
-            f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{dimensions}\n{dimensions} ICAs - Explained Variance : {self.ica_explained_variance_score*100:0.5f}'
-        )
+            f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_'
+            f'{dimensions}\n{dimensions} ICAs - Explained Variance: {self.ica_explained_variance_score * 100:0.5f}')
 
-        plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{dimensions}.png'
-        )
+        plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_name}_ICAs_{dimensions}.png')
 
         plt.show()
 
     def plot_ICA_zoom(self, ICA_letter: str, zoom_time_start: str, zoom_time_end: str, **kwargs) -> None:
-        """Visualise a zoomed section of an ICA
+        """
+        Plots a zoomed view of a specific ICA component.
 
         Args:
-            ICA_letter (str): ICA letter
-            zoom_time_start (str): Zoom section start
-            zoom_time_end (str): Zoom section end
+            ICA_letter (str): The letter corresponding to the ICA component to plot.
+            zoom_time_start (str): The start time of the zoomed view.
+            zoom_time_end (str): The end time of the zoomed view.
+            **kwargs: Additional keyword arguments to pass to `plt.subplots()`.
+
+        Raises:
+            IndexError: If the specified ICA component does not exist.
+
+        Note:
+            The `ICA_letter` argument should be an uppercase letter corresponding to the ICA component to plot.
         """
+
         ica_number = [
             x_enum for x_enum, x in enumerate(list_of_strings(self.ica.n_components)) if x == ICA_letter.upper()
         ][0]
@@ -255,13 +309,14 @@ class ICA:
         ax.xaxis.set_major_formatter(formatter)
 
         plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICAs_{self.ica.n_components}_{ICA_letter}_Zoom_{zoom_time_start}_{zoom_time_end}.png'
-        )
+            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICAs_{self.ica.n_components}_{ICA_letter}_Zoom_{zoom_time_start}_{zoom_time_end}.png')
 
         plt.show()
 
     def plot_ica_contribution(self, **kwargs) -> None:
-        """Visualise the ICA contribution to each cluster
+        """
+        Visualise the ICA contribution to each cluster
         """
 
         # Calculate centroid
@@ -293,13 +348,25 @@ class ICA:
         ax.set_yticks(range(self.ica_features.shape[1]), list_of_strings(self.ica_features.shape[1]))
 
         plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clustering_{self.ica.n_components}_Waveform_contribution.png',
+            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_ICA_{self.ica.n_components}_clustering_{self.ica.n_components}_'
+            f'Waveform_contribution.png',
             bbox_inches='tight')
 
         plt.show()
 
     def list_linkages(self):
+        """
+        Lists all the linkage files for the given data network, station, location, and network name.
+
+        This function uses the `glob` function to find all the linkage files in the clustering directory that match the
+        pattern `f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+        f'{self.network_name}_ICA_*linkage*'`. It prints the list of linkage files found.
+
+        Parameters:
+            self (object): The instance of the class.
+
+        """
         print(
-            glob(
-                f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_*linkage*'
-            ))
+            glob(f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+                 f'{self.network_name}_ICA_*linkage*'))

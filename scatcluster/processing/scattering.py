@@ -43,10 +43,20 @@ class Scattering:
                 return po[1]
 
     def load_data_times(self):
-        # get windowed times
+        """
+        Load the data times from a file and store them in the `data_times` attribute.
+
+        This function reads the data times from a file located at
+        `{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_`
+        `{self.network_name}_times.npy` and stores them in the `data_times` attribute.
+
+        Parameters:
+            None
+
+        """
         self.data_times = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_times.npy'
-        )
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_times.npy')
 
     def build_day_list(self) -> None:
         """Build data_day_list object
@@ -72,7 +82,7 @@ class Scattering:
         """
         trace.decimate(2)
         trace.detrend('linear')
-        trace.filter(type="highpass", freq=1)
+        trace.filter(type='highpass', freq=1)
         trace.detrend('demean')
         trace.taper(0.05)
         return trace
@@ -103,8 +113,8 @@ class Scattering:
             stream.merge(method=1, fill_value=0)
             stream.trim(starttime, endtime, pad=True, fill_value=0)
             return stream
-        except:
-            print(f'>> Skipping {starttime}-{endtime} as there was an error in loading data from SDS Client')
+        except Exception as e:
+            print(f'>> Skipping {starttime}-{endtime} as there was an error in loading data from SDS Client due to {e}')
             return Stream()
 
     def network_build_scatcluster(self) -> None:
@@ -118,8 +128,8 @@ class Scattering:
 
         # SAVE NETWORK IN PICKLE FILE
         with open(
-                f'{self.data_savepath}networks/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}.pickle',
-                'wb') as handle:
+                f'{self.data_savepath}networks/{self.data_network}_{self.data_station}_{self.data_location}_'
+                f'{self.network_name}.pickle', 'wb') as handle:
             pickle.dump(self.net, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     def plot_network_filter_banks(self) -> None:
@@ -168,13 +178,11 @@ class Scattering:
 
             ax[bank_enum, 0].text(width_max_label, 0, 'Temporal Width (s)', fontsize='small')
             ax[bank_enum, 1].text(0.001, 0, 'Centre Freq. (Hz)', fontsize='small')
-        plt.suptitle(
-            f'scatcluster parametrization for Segment {self.network_segment} : Step {self.network_step} : Banks {self.network_banks_name}'
-        )
+        plt.suptitle(f'scatcluster parametrization for Segment {self.network_segment}: Step {self.network_step}: Banks '
+                     f'{self.network_banks_name}')
 
-        plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_filter_banks.png'
-        )
+        plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_name}_filter_banks.png')
 
     def load_sample_data(self) -> None:
         """Load sample
@@ -191,7 +199,7 @@ class Scattering:
 
         _, ax = plt.subplots(2, len(self.channel_list), sharex=True, sharey='row', figsize=(20, 5))
 
-        for channel_num, chan in enumerate(self.channel_list):
+        for channel_num, _ in enumerate(self.channel_list):
             first_order_scattering_coefficients = self.sample_scattering_coefficients[0][:, channel_num, :].squeeze().T
             first_order_scattering_coefficients = np.real(np.log10(first_order_scattering_coefficients))
 
@@ -210,9 +218,8 @@ class Scattering:
         plt.subplots_adjust(wspace=0, hspace=0)
 
         plt.suptitle('Sample Trace ScatCluster Transform')
-        plt.savefig(
-            f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_sample_transform.png'
-        )
+        plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_name}_sample_transform.png')
         plt.show()
 
     def process_sample_data(self) -> None:
@@ -236,7 +243,13 @@ class Scattering:
         self.plot_sample_spectra()
 
     def plot_seismic(self, sample: bool = False):
-        # Prepare data
+        """
+        Plot the seismic data.
+
+        Parameters:
+            sample (bool): If True, plot the sample data. Otherwise, plot the regular data.
+
+        """
         if sample:
             if self.sample_data is None:
                 self.sample_stream = self.load_sample_data()
@@ -279,7 +292,8 @@ class Scattering:
             day_end (str): End day of format "YYYY-MM-DD"
         """
         print(f'Processing {day_start} - {day_end}')
-        scatterings_path = f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_scatterings_{day_start}.npz'
+        scatterings_path = (f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_'
+                            f'{self.data_location}_{self.network_name}_scatterings_{day_start}.npz')
         if os.path.exists(scatterings_path):
             print('> Scatterings already exist')
         else:
@@ -318,7 +332,7 @@ class Scattering:
         """
         self.build_day_list()
         if len(self.data_day_list) > 0:
-            print(f'The following days will be excluded from the analysis : {self.data_exclude_days}')
+            print(f'The following days will be excluded from the analysis: {self.data_exclude_days}')
 
         for day_start, day_end in zip(
                 pd.date_range(
@@ -332,16 +346,16 @@ class Scattering:
             self.process_scatcluster_yyyy_mm_dd(day_start, day_end)
 
     def process_vectorized_scattering_coefficients(self) -> None:
-        """Load and reshape the all the scattering coefficients that exist in {data_savepath}/scatterings/ and
-        match the pattern "{data_network}_{data_station}_{network_name}_scatterings_*.npz"
-
-        Args:
-            file_list_pattern (_type_, optional): Specify the custom regex to be used when building vectorised scat coefficients . Defaults to None and matches all.
         """
-        file_list = [
-            f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_scatterings_{day_start}.npz'
-            for day_start in self.data_day_list
-        ]
+        Process the vectorized scattering coefficients by loading data from files, reshaping the coefficients,
+        standardizing in log space, and vectorizing them. Display statistics from the vectorization and store the
+        processed data.
+
+        Parameters:
+            self: An instance of the class.
+        """
+        file_list = [(f'{self.data_savepath}scatterings/{self.data_network}_{self.data_station}_{self.data_location}_'
+                      f'{self.network_name}_scatterings_{day_start}.npz') for day_start in self.data_day_list]
 
         # LOAD DATA
         TIMES = []
@@ -353,7 +367,7 @@ class Scattering:
                 TIMES.append(scat_file['times'])
                 SC0.append(scat_file['scat_coef_0'])
                 SC1.append(scat_file['scat_coef_1'])
-            except:
+            except FileNotFoundError:
                 print(f'{file} is missing. This has been skipped.')
         times = np.hstack(TIMES)
         del TIMES
@@ -363,7 +377,7 @@ class Scattering:
         del SC1
 
         # RESHAPE THE SCATTERING COEFFICIENTS, STANDARDIZE IN LOG SPACE AND VECTORIZE THEM
-        scat_coef_0_reshaped = (scat_coef_0.reshape(scat_coef_0.shape[0], scat_coef_0.shape[1] * scat_coef_0.shape[2]))
+        scat_coef_0_reshaped = scat_coef_0.reshape(scat_coef_0.shape[0], scat_coef_0.shape[1] * scat_coef_0.shape[2])
         scat_coef_1_reshaped = (scat_coef_1.reshape(scat_coef_1.shape[0],
                                                     scat_coef_1.shape[1] * scat_coef_1.shape[2] * scat_coef_1.shape[3]))
 
@@ -388,30 +402,36 @@ class Scattering:
         self.data_scat_coef_vectorized = np.abs(np.log10(scat_coef_vectorized + 0.00001))
 
         # Display statistics from the vectorization
-        print(f'Number of time windows of size {self.network_segment}s : {int(self.data_times.shape[0])}')
-        print(f'Number of days investigated : {int((self.network_segment * self.data_times.shape[0])/ 86400)}')
-        print(f'Number of Scat Coefficients : {int(self.data_scat_coef_vectorized.shape[1])}')
-        print(f'Vectorized Scat Coefficients : {self.data_scat_coef_vectorized.shape}')
+        print(f'Number of time windows of size {self.network_segment}s: {int(self.data_times.shape[0])}')
+        print(f'Number of days investigated: {int((self.network_segment * self.data_times.shape[0])/86400)}')
+        print(f'Number of Scat Coefficients: {int(self.data_scat_coef_vectorized.shape[1])}')
+        print(f'Vectorized Scat Coefficients: {self.data_scat_coef_vectorized.shape}')
 
         # Store Data
         np.save(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_times.npy',
-            self.data_times)
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_times.npy', self.data_times)
         np.save(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_scat_coef_vectorized.npy',
-            self.data_scat_coef_vectorized)
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_scat_coef_vectorized.npy', self.data_scat_coef_vectorized)
 
     def preload_times(self):
-        data_times = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_times.npy'
-        )
+        """
+        Preloads the times data from a numpy file and assigns it to the `data_times` attribute of the class.
+
+        Parameters:
+            None
+
+        """
+        data_times = np.load(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                             f'{self.network_name}_times.npy')
         self.data_times = data_times
 
     def load_scat_coef_vectorized(self):
         if not hasattr(self, 'scat_coef_vectorized'):
             self.scat_coef_vectorized = np.load(
-                f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_scat_coef_vectorized.npy'
-            )
+                f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                f'{self.network_name}_scat_coef_vectorized.npy')
         else:
             print('SC.scat_coef_vectorized already exist')
 

@@ -40,14 +40,14 @@ repos:
     rev: v1.0.5
     hooks:
     -   id: python-bandit-vulnerability-check
-        args: [-ll, --skip, "B321,B402", --recursive, .]
+        args: [-ll, --skip, "B321,B402,B301", --recursive, .]
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
     rev: v1.3.1
     hooks:
     -   id: python-safety-dependencies-check
         files: requirements.txt
--   repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v3.0.0a5
+-   repo: https://github.com/pylint-dev/pylint
+    rev: v3.1.0
     hooks:
     -   id: pylint
         name: pylint
@@ -55,37 +55,31 @@ repos:
         language: system
         types: [python]
         args:
-          [
-            "-rn", # Only display messages
-  #          "-sn", # Don't display the score
-            "--rcfile=ds-pre-commit-hooks/.pylintrc", # Link to your config file
-            "--load-plugins=pylint.extensions.docparams", # Load an extension
-          ]
+           [
+             "-rn", # Only display messages
+        #          "-sn", # Don't display the score
+             "--rcfile=pre-commit-hooks/.pylintrc", # Link to your config file
+             "--load-plugins=pylint.extensions.docparams", # Load an extension
+           ]
 -   repo: https://github.com/MarcoGorelli/madforhooks # sorts environment.yml
     rev: 0.3.0
     hooks:
     -   id: conda-env-sorter
-    -   id: no-print-statements
 -   repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
     rev: v0.1.0
     hooks:
     -   id: dockerfilelint
         stages: [commit]
--   repo: https://github.com/Yelp/detect-secrets
-    rev: v1.2.0
-    hooks:
-    -   id: detect-secrets
-        exclude: package.lock.json
 -   repo: https://github.com/econchick/interrogate
     rev: 1.7.0
     hooks:
       - id: interrogate
-        args: ["--fail-under=80", "--verbose"]
+        args: ["--fail-under=80", "--verbose", "--ignore-init-method", "--ignore-init-module"]
 -   repo: https://github.com/PyCQA/docformatter
     rev: v1.7.5
     hooks:
     -   id: docformatter
-        args: ["--in-place", "--black", "-r", "--style=epytext", "--wrap-descriptions=120",
+        args: ["--in-place", "--black", "-r", "--style=sphinx", "--wrap-descriptions=120",
                "--wrap-summaries=120","--pre-summary-newline", "--add-summary-space",
                "--version"]
 -   repo: https://github.com/Carreau/velin

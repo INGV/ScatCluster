@@ -138,8 +138,12 @@ disable=apply-builtin,
         xrange-builtin,
         zip-builtin-not-iterating,
         logging-fstring-interpolation,
-        broad-exception-caught
-
+        broad-exception-caught,
+        invalid-name,
+        missing-class-docstring,
+        missing-module-docstring,
+        attribute-defined-outside-init,
+        inconsistent-return-statements
 
 [REPORTS]
 

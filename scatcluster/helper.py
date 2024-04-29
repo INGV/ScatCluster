@@ -1,3 +1,6 @@
+"""
+ScatCluster Helper
+"""
 import importlib
 import itertools
 from string import ascii_uppercase
@@ -6,15 +9,33 @@ import numpy as np
 from scipy.stats import median_abs_deviation
 
 
-def is_gpu():
-    return importlib.util.find_spec('cupy') != None
+def is_gpu_available():
+    """Check if the GPU is available."""
+    cupy_spec = importlib.util.find_spec('cupy')
+    return cupy_spec is not None
 
 
 def round_nearest(x, a):
+    """
+    Rounds a number `x` to the nearest multiple of `a`.
+
+    Parameters:
+        x (float): The number to be rounded.
+        a (float): The multiple to round to.
+
+    Returns:
+        float: The rounded number.
+    """
     return round(x / a) * a
 
 
 def is_notebook() -> bool:
+    """
+    A function to check if the code is running in a Jupyter notebook or IPython terminal.
+
+    Returns:
+        bool: True if running in a Jupyter notebook or qtconsole, False otherwise.
+    """
     try:
         shell = get_ipython().__class__.__name__
         if shell == 'ZMQInteractiveShell':
@@ -28,6 +49,9 @@ def is_notebook() -> bool:
 
 
 def tqdm_importer():
+    """
+    A function that imports the tqdm module based on the current environment.
+    """
     if is_notebook:
         pass
     else:
@@ -123,10 +147,25 @@ COLORS = [
 
 
 def iter_all_strings():
+    """
+    Generates all possible strings of uppercase letters of increasing length.
+
+    Returns:
+        A generator that yields all possible strings.
+    """
     for size in itertools.count(1):
         for s in itertools.product(ascii_uppercase, repeat=size):
             yield ''.join(s)
 
 
 def list_of_strings(number_letters):
-    return [s for s in itertools.islice(iter_all_strings(), number_letters)]
+    """
+    Generates a list of strings of length 'number_letters' using itertools.islice and iter_all_strings.
+
+    Parameters:
+        number_letters (int): The number of strings to generate.
+
+    Returns:
+        list: A list of strings of length 'number_letters'.
+    """
+    return list(itertools.islice(iter_all_strings(), number_letters))

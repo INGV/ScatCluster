@@ -1,3 +1,4 @@
+"""Predictions analysis module."""
 import os
 
 import matplotlib.pyplot as plt
@@ -35,11 +36,13 @@ class Predictions:
             raise ValueError('Provided time_window is not valid')
 
     def df_times_for_predictions(self, n_clusters, cluster_rank=False) -> pd.DataFrame:
-        """Get a pandas dataframe with columns {'times','predictions'} for the windowed seismograms
+        """
+        Get a pandas dataframe with columns {'times','predictions'} for the windowed seismograms
         and associated prediction
 
         Args:
             n_clusters (_type_): The number of clusters for the predition
+            cluster_rank (bool, optional): Whether to calculate the inter-cluster rank. Defaults to False.
 
         Returns:
             _type_: A pandas dataframe with columns {'times','predictions'} for the windowed seismograms and predictions
@@ -47,11 +50,12 @@ class Predictions:
         self.load_data_times()
 
         # load cluster predictions
-        clusters_path = f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz'
+        clusters_path = (f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+                         f'{self.network_name}_ICA_{self.ica.n_components}_clusters_{n_clusters}.npz')
         if not os.path.exists(clusters_path):
             raise ValueError(
-                f'Clusters of size {n_clusters} does not exist. Kindly choose another n_clusters or compute using "single_dendrogram"'
-            )
+                f'Clusters of size {n_clusters} does not exist. Kindly choose another n_clusters or compute using'
+                f' "single_dendrogram"')
         p = np.load(clusters_path)
         self.dendrogram_predictions = p['predictions']
 
@@ -72,7 +76,7 @@ class Predictions:
 
                 # Centroid
                 centroid = np.median(cluster_samples, axis=0)
-                distances = list()
+                distances = []
                 for sample in cluster_samples:
                     distances.append(euclidean(sample, centroid))
                 distances = np.array(distances)
@@ -89,6 +93,13 @@ class Predictions:
         return self.pd_times_preds
 
     def plot_prediction_occurance(self, n_clusters):
+        """
+        Plots the occurrence of predictions in a scatter plot.
+
+        Parameters:
+            n_clusters (int): The number of clusters.
+
+        """
         if self.data_times is None or self.dendrogram_predictions is None:
             self.pd_times_preds = self.df_times_for_predictions(n_clusters)
 
@@ -106,5 +117,19 @@ class Predictions:
         plt.show()
 
     def preload_predictions(self, ica_n_components, n_clusters):
-        file_path = f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_ICA_{ica_n_components}_clusters_{n_clusters}.npz'
+        """
+        Load precomputed predictions from a NumPy file.
+
+        Parameters:
+            ica_n_components (int): The number of ICA components used for prediction.
+            n_clusters (int): The number of clusters used for prediction.
+
+        Returns:
+            numpy.ndarray: The loaded predictions.
+
+        Raises:
+            FileNotFoundError: If the specified file does not exist.
+        """
+        file_path = (f'{self.data_savepath}clustering/{self.data_network}_{self.data_station}_{self.data_location}_'
+                     f'{self.network_name}_ICA_{ica_n_components}_clusters_{n_clusters}.npz')
         return np.load(file_path)

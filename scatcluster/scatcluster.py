@@ -1,3 +1,4 @@
+"""Main ScatCluster class"""
 import json
 from typing import List
 
@@ -17,6 +18,7 @@ def config_load(ssn_json_file: str, verbose=True):
 
     Args:
         ssn_json_file (str): The location of the ScatCluster Configuration json file
+        verbose (bool, optional): Whether to print the configuration. Defaults to True.
 
     Returns:
         _type_: A preloaded ScatCluster instance.
@@ -32,45 +34,87 @@ def config_load(ssn_json_file: str, verbose=True):
 
 class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions, ExternalCorrelation,
                   WaveformCorrelations, AnalysisProcessing):
-    """INGV ScatCluster class workflow for clustering continuous time series with a deep scattering network.
+    """
+    INGV ScatCluster class workflow for clustering continuous time series with a deep scattering network.
     """
 
-    def __init__(self,
-                 data_savepath: str,
-                 data_client_path: str,
-                 data_network: str,
-                 data_station: str,
-                 data_location: str,
-                 data_channel: str,
-                 data_sample_starttime: str,
-                 data_sample_endtime: str,
-                 data_starttime: str,
-                 data_endtime: str,
-                 sc_config=None,
-                 data_exclude_days: List[str] = [],
-                 network_segment: int = 3600,
-                 network_step: int = 3600,
-                 network_sampling_rate: int = 50,
-                 network_banks: tuple = ({
-                     'octaves': 4,
-                     'resolution': 4,
-                     'quality': 2
-                 }, {
-                     'octaves': 7,
-                     'resolution': 1,
-                     'quality': 1
-                 }),
-                 network_pooling: str = 'avg',
-                 ica_ev_limit: float = 0.99,
-                 ica_min_ICAs: int = 10,
-                 ica_max_ICAs: int = 10,
-                 ica_overwrite_previous_models: bool = False,
-                 ica_explained_variance_score: float = None,
-                 dendrogram_method: str = 'ward',
-                 dendrogram_time_zone: str = None,
-                 waveforms_n_samples: int = 5,
-                 waveforms=None,
-                 spectrograms=None):
+    def __init__(
+            self,
+            data_savepath: str,
+            data_client_path: str,
+            data_network: str,
+            data_station: str,
+            data_location: str,
+            data_channel: str,
+            data_sample_starttime: str,
+            data_sample_endtime: str,
+            data_starttime: str,
+            data_endtime: str,
+            sc_config=None,
+            data_exclude_days: List[str] = [],
+            network_segment: int = 3600,
+            network_step: int = 3600,
+            network_sampling_rate: int = 50,
+            network_banks: tuple = ({
+                'octaves': 4,
+                'resolution': 4,
+                'quality': 2
+            }, {
+                'octaves': 7,
+                'resolution': 1,
+                'quality': 1
+            }),
+            network_pooling: str = 'avg',
+            ica_ev_limit: float = 0.99,
+            ica_min_ICAs: int = 10,
+            ica_max_ICAs: int = 10,
+            ica_overwrite_previous_models: bool = False,
+            ica_explained_variance_score: float = None,  # pylint: disable=unused-argument
+            dendrogram_method: str = 'ward',
+            dendrogram_time_zone: str = None,  # pylint: disable=unused-argument
+            waveforms_n_samples: int = 5,
+            waveforms=None,  # pylint: disable=unused-argument
+            spectrograms=None):  # pylint: disable=unused-argument
+        """
+        Initializes a ScatCluster instance.
+
+        Args:
+            data_savepath (str): The path to save data.
+            data_client_path (str): The path to the client data.
+            data_network (str): The network name.
+            data_station (str): The station name.
+            data_location (str): The location name.
+            data_channel (str): The channel name.
+            data_sample_starttime (str): The start time of the sample data.
+            data_sample_endtime (str): The end time of the sample data.
+            data_starttime (str): The start time of the data.
+            data_endtime (str): The end time of the data.
+            sc_config (Optional): The ScatCluster configuration. Defaults to None.
+            data_exclude_days (List[str], optional): The list of days to exclude. Defaults to [].
+            network_segment (int, optional): The network segment. Defaults to 3600.
+            network_step (int, optional): The network step. Defaults to 3600.
+            network_sampling_rate (int, optional): The network sampling rate. Defaults to 50.
+            network_banks (tuple, optional): The network banks. Defaults to ({
+                'octaves': 4,
+                'resolution': 4,
+                'quality': 2
+            }, {
+                'octaves': 7,
+                'resolution': 1,
+                'quality': 1
+            }).
+            network_pooling (str, optional): The network pooling. Defaults to 'avg'.
+            ica_ev_limit (float, optional): The ICA ev limit. Defaults to 0.99.
+            ica_min_ICAs (int, optional): The minimum number of ICAs. Defaults to 10.
+            ica_max_ICAs (int, optional): The maximum number of ICAs. Defaults to 10.
+            ica_overwrite_previous_models (bool, optional): Whether to overwrite previous models. Defaults to False.
+            ica_explained_variance_score (float, optional): The explained variance score. Defaults to None.
+            dendrogram_method (str, optional): The dendrogram method. Defaults to 'ward'.
+            dendrogram_time_zone (str, optional): The dendrogram time zone. Defaults to None.
+            waveforms_n_samples (int, optional): The number of samples for waveforms. Defaults to 5.
+            waveforms (Optional): The waveforms. Defaults to None.
+            spectrograms (Optional): The spectrograms. Defaults to None.
+        """
 
         self.sc_config = sc_config
         self.data_savepath = data_savepath
@@ -120,9 +164,18 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
         self.dendrogram_time_zone = None
         self.waveforms_n_samples = waveforms_n_samples
         self.network_banks_name = '_'.join([str(order[vals]) for order in self.network_banks for vals in order.keys()])
-        self.network_name = f'{self.network_segment}_{self.network_step}_{self.network_sampling_rate}_{self.network_banks_name}_{self.network_pooling}'
+        self.network_name = (f'{self.network_segment}_{self.network_step}_{self.network_sampling_rate}_'
+                             f'{self.network_banks_name}_{self.network_pooling}')
         self.waveforms = None
         self.spectrograms = None
 
     def __setitem__(self, key, value):
+        """
+        Set the value of an item in the object.
+
+        Parameters:
+            key (str): The key of the item.
+            value (Any): The value to set.
+
+        """
         setattr(self, key, value)

@@ -1,3 +1,6 @@
+"""
+Setup script for ScatCluster
+"""
 from setuptools import find_packages, setup
 
 NAME = 'scatcluster'

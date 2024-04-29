@@ -1,3 +1,4 @@
+"""Processing analysis module."""
 import os
 
 import matplotlib.pyplot as plt
@@ -22,7 +23,19 @@ class AnalysisProcessing():
         return [np.sqrt(np.mean(tr.data**2)) for tr in stream]
 
     def build_waveforms_data(self, include_envelopes=False, include_RMS=False, custom_title=''):
-        waveforms_file = f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_waveforms{custom_title}.npy'
+        """
+        This function builds waveforms data based on specified parameters.
+
+        Parameters:
+            include_envelopes (bool): Flag to include envelopes in the data.
+            include_RMS (bool): Flag to include RMS values in the data.
+            custom_title (str): Custom title to append to the waveforms file.
+
+        Returns:
+            numpy.ndarray: Array containing the waveforms data.
+        """
+        waveforms_file = (f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                          f'{self.network_segment}_waveforms{custom_title}.npy')
         if os.path.exists(waveforms_file):
             print('Waveforms already calculated. Loading into self.waveforms')
             waveforms = self.load_waveforms(custom_title)
@@ -47,20 +60,21 @@ class AnalysisProcessing():
 
             if include_envelopes:
                 np.save(
-                    f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_envelopes{custom_title}.npy',
-                    np.array(data_envelope))
+                    f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_segment}_envelopes{custom_title}.npy', np.array(data_envelope))
 
             if include_RMS:
                 np.save(
-                    f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_RMS{custom_title}.npy',
-                    np.array(data_rms))
+                    f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                    f'{self.network_segment}_RMS{custom_title}.npy', np.array(data_rms))
 
         self.waveforms = waveforms
         return waveforms
 
     def load_waveforms(self, waveform_extra_title: str = ''):
         waveforms = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_waveforms{waveform_extra_title}.npy',
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_segment}_waveforms{waveform_extra_title}.npy',
             allow_pickle=True)
         self.waveforms = waveforms
         return waveforms
@@ -75,13 +89,27 @@ class AnalysisProcessing():
             return ''
 
     def spectrogram_build(self, waveforms, samp_rate, extra_title=''):
-        spectrum_file = f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_spectrograms{extra_title}.npy'
+        """
+        Builds spectrograms based on the provided waveforms and sample rate.
+        Saves the spectrograms to a file if they don't already exist.
+        Updates the class attribute 'spectrograms' with the generated spectrograms.
+
+        Parameters:
+            waveforms (list): List of waveforms for spectrogram generation.
+            samp_rate (int): Sampling rate for spectrogram generation.
+            extra_title (str): Additional title for the spectrogram file (default '').
+
+        Returns:
+            numpy.ndarray: Array containing the generated spectrograms.
+        """
+        spectrum_file = (f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                         f'{self.network_segment}_spectrograms{extra_title}.npy')
         if os.path.exists(spectrum_file):
             print(f'>> Spectrum already exists for {spectrum_file}')
             spectrograms = self.load_spectrograms(extra_title)
         else:
             specgrams = []
-            for waveform_enum, waveform in tqdm(enumerate(waveforms)):
+            for _, waveform in tqdm(enumerate(waveforms)):
                 specgrams.append(self.get_spectrogram_data(waveform.select(component='Z'), samp_rate))
             spectrograms = np.array(specgrams)
             np.save(spectrum_file, spectrograms)
@@ -102,7 +130,8 @@ class AnalysisProcessing():
 
     def load_spectrograms(self, extra_title=''):
         spectrograms = np.load(
-            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_{self.network_segment}_spectrograms{extra_title}.npy',
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_segment}_spectrograms{extra_title}.npy',
             allow_pickle=True)
         self.spectrograms = spectrograms
 
