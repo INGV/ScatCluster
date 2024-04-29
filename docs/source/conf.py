@@ -33,7 +33,8 @@ extensions = [
     'sphinx.ext.duration', 'sphinx.ext.doctest', 'sphinx.ext.autodoc', 'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx', 'sphinx.ext.napoleon', 'sphinx.ext.viewcode', 'sphinx_gallery.load_style',
     'sphinx_favicon', 'sphinx_design', 'autoapi.extension', 'nbsphinx', 'numpydoc',
-    'IPython.sphinxext.ipython_console_highlighting', 'sphinx_copybutton', 'nbsphinx', 'rtds_action'
+    'IPython.sphinxext.ipython_console_highlighting', 'sphinx_copybutton', 'nbsphinx', 
+    'rtds_action'
 ]
 
 favicons = [
@@ -93,38 +94,38 @@ language = 'en'
 nbsphinx_allow_errors = True
 
 # # The name of your GitHub repository
-# rtds_action_github_token = os.environ['GITHUB_TOKEN']
+# rtds_action_github_token = os.environ.get('GITHUB_TOKEN',)
 # rtds_action_github_repo = 'INGV/ScatCluster'
 # # A GitHub personal access token is required, more info below
 # # Whether or not to raise an error on Read the Docs if the
 # # artifact containing the notebooks can't be downloaded (optional)
 # rtds_action_error_if_missing = False
 
-# extensions.append('sphinx_material')
-# html_theme_path = sphinx_material.html_theme_path()
-# html_context = sphinx_material.get_html_context()
-# html_theme = 'sphinx_material'
-# html_title = 'ScatCluster'
-# html_short_title = 'ScatCluster'
-# html_theme_options = {
-#     'nav_title': 'scatcluster',
-#     'logo_icon': '&#xe869',
-#     'color_primary': 'blue',
-#     'color_accent': 'light-blue',
-#     'repo_url': 'https://github.com/INGV/ScatCluster',
-#     'repo_name': 'scatcluster',
-#     'globaltoc_depth': 1,
-#     'globaltoc_collapse': False,
-#     'globaltoc_includehidden': False,
-#     'nav_links': [],
-# }
-# # HTML theme
-# html_show_sourcelink = False
-# html_sidebars = {
-#     '**': [
-#         'logo-text.html',
-#         'globaltoc.html',
-#         'localtoc.html',
-#         'searchbox.html',
-#     ]
-# }
+extensions.append('sphinx_material')
+html_theme_path = sphinx_material.html_theme_path()
+html_context = sphinx_material.get_html_context()
+html_theme = 'sphinx_material'
+html_title = 'ScatCluster'
+html_short_title = 'ScatCluster'
+html_theme_options = {
+    'nav_title': 'scatcluster',
+    'logo_icon': '&#xe869',
+    'color_primary': 'blue',
+    'color_accent': 'light-blue',
+    'repo_url': 'https://github.com/INGV/ScatCluster',
+    'repo_name': 'scatcluster',
+    'globaltoc_depth': 1,
+    'globaltoc_collapse': False,
+    'globaltoc_includehidden': False,
+    'nav_links': [],
+}
+# HTML theme
+html_show_sourcelink = False
+html_sidebars = {
+    '**': [
+        'logo-text.html',
+        'globaltoc.html',
+        'localtoc.html',
+        'searchbox.html',
+    ]
+}

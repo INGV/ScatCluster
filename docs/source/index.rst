@@ -1,7 +1,21 @@
 Welcome to ScatCluster's documentation!
-===================================
+=======================================
 
 **ScatCluster** A workflow for clustering continuous time series with a deep scattering network.
+
+.. image:: _static/scatcluster_text.png
+   :width: 0
+   :align: center
+
+.. raw:: html
+
+   <p align="center">
+      <img src="_images/scatcluster_text.png" width=250px
+      style="background-color: transparent;"/>
+   </p>
+
+|
+
 
 Contents
 --------
@@ -9,8 +23,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   guide
    getting_started
+   usage
 
 About
 -----
@@ -20,7 +34,6 @@ About
    This project is still in development. The API is not stable and may change
    without notice. Once a stable version is released, the API will be
    considered stable and will not change without a major version bump.
-   A target release date will be around April 2023.
 
 License
 -------
