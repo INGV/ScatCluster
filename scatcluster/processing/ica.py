@@ -2,7 +2,7 @@
 import os
 import pickle
 from glob import glob
-from typing import Optional
+from typing import List, Optional
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -52,7 +52,7 @@ class ICA:
     def process_ICA_single(self,
                            num_ICA: int,
                            return_data: bool = False,
-                           exclude_timestamps: Optional[list[str]] = None,
+                           exclude_timestamps: Optional[List[str]] = None,
                            exclude_timestamps_skip: int = 5,
                            **kwargs):
         """
@@ -64,7 +64,7 @@ class ICA:
         Parameters:
             num_ICA (int): The number of Independent Components to reduce the data to.
             return_data (bool): Flag indicating whether to return data after processing. Default is False.
-            exclude_timestamps (Optional[list[str]]): List of timestamps to exclude from the data before fitting.
+            exclude_timestamps (Optional[List[str]]): List of timestamps to exclude from the data before fitting.
             exclude_timestamps_skip (int): The number of data points to skip for each excluded timestamp.
             **kwargs: Additional keyword arguments that can be passed to the FastICA model.
 
@@ -145,14 +145,14 @@ class ICA:
             return score_exp_var, score_mse, model, features
 
     def process_ICA_range(self,
-                          exclude_timestamps: Optional[list[str]] = None,
+                          exclude_timestamps: Optional[List[str]] = None,
                           exclude_timestamps_skip: int = 3,
                           **kwargs) -> None:
         """
         Process a range of Independent Component Analysis (ICA).
 
         Parameters:
-            exclude_timestamps (Optional[list[str]]): List of timestamps to exclude from the data.
+            exclude_timestamps (Optional[List[str]]): List of timestamps to exclude from the data.
             exclude_timestamps_skip (int): The number of data points to skip for each excluded timestamp.
             **kwargs: Additional keyword arguments.
 

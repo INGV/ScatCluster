@@ -15,6 +15,7 @@ class AnalysisProcessing:
     def process_stream_envelope(self, stream: Stream) -> Stream:
         st_env = stream.copy()
         for trace_enum, tr in enumerate(st_env):
+            # pylint: disable-next=unnecessary-list-index-lookup
             st_env[trace_enum].data = obspy.signal.filter.envelope(tr.data)
 
         return st_env

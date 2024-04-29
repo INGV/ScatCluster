@@ -224,8 +224,7 @@ class SSNCrossTabAnalysis:
             if orientation == 'left':
                 ax.plot(0, coordinate, 'o', mfc=color, **node_style)
                 index = int((coordinate - 5) / 10) + 1
-                label = '{:d}\n{}\n{}'.format(index, pop,
-                                              '[' + str(int(pop.replace('(', '').replace(')', '')) * factor) + ']')
+                label = f"{index:d}\n{pop}\n{'[' + str(int(pop.replace('(', '').replace(')', '')) * factor) + ']'}"
                 ax.text(-0.1, coordinate, label, color=color, va='center')
             if orientation == 'bottom':
                 ax.plot(coordinate, 0, 'o', mfc=color, **node_style)

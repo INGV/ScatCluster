@@ -466,8 +466,10 @@ class Dendrogram:
         # Manage share using grouper objects
         for ax in axs.flat:
             if sharex:
+                # pylint: disable-next=protected-access
                 target._shared_axes['x'].join(target, ax)
             if sharey:
+                # pylint: disable-next=protected-access
                 target._shared_axes['y'].join(target, ax)
         # Turn off x tick labels and offset text for all but the bottom row
         if sharex and axs.ndim > 1:

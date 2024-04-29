@@ -25,7 +25,7 @@ class ExternalCorrelation:
         Parameters:
             df_predictions (pd.DataFrame): DataFrame containing predictions.
             df_external (pd.DataFrame): DataFrame containing external data.
-            metric_list (list[str]): List of metrics to plot.
+            metric_list (List[str]): List of metrics to plot.
             title (str, optional): Title of the plot. Defaults to None.
             **kwargs: Additional keyword arguments for plt.subplots.
         """
@@ -94,13 +94,13 @@ class ExternalCorrelation:
 
         return df_merge
 
-    def interpolate_missing_values(self, df_merge: pd.DataFrame, target_cols: list[str] | None = None):
+    def interpolate_missing_values(self, df_merge: pd.DataFrame, target_cols: List[str] | None = None):
         """
         Interpolate missing values in the specified columns of a merged dataframe.
 
         Parameters:
             df_merge (pd.DataFrame): The merged dataframe containing the target columns.
-            target_cols (list[str], optional): The list of columns to interpolate missing values for.
+            target_cols (List[str], optional): The list of columns to interpolate missing values for.
                 Defaults to ['outTemp', 'outHumidity', 'barometer', 'windSpeed', 'windDir', 'windGust', 'windGustDir',
                 'rain', 'rainRate', 'dewpoint'].
 
@@ -170,7 +170,7 @@ class ExternalCorrelation:
 
     def external_data_smoothing_scaling(self,
                                         df_merge: pd.DataFrame,
-                                        target_cols: list[str],
+                                        target_cols: List[str],
                                         rolling_window_size: int = 48,
                                         plot_external_data_smoothing: bool = True,
                                         title: str = None):
@@ -179,7 +179,7 @@ class ExternalCorrelation:
 
         Args:
             df_merge (pd.DataFrame): The merged dataframe containing the external data.
-            target_cols (list[str]): The columns of the external data to be smoothed and scaled.
+            target_cols (List[str]): The columns of the external data to be smoothed and scaled.
             rolling_window_size (int, optional): The size of the rolling window for smoothing. Defaults to 48.
             plot_external_data_smoothing (bool, optional): Whether to plot the smoothed and scaled data.
                 Defaults to True.
@@ -238,8 +238,7 @@ class ExternalCorrelation:
             print(f'>>> {col} - score: {score}')
             REGRESSION[col] = regression
             SCORE[col] = score
-
-        print(f'>> Best performing weather data {[k for k in SCORE.keys() if SCORE[k] == max(SCORE.values())]}')
+        print(f'>> Best performing weather data {[k for k in SCORE.items() if k == max(SCORE.values())]}')
         print('\n')
 
         return SCORE, REGRESSION

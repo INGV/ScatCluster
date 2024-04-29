@@ -143,7 +143,11 @@ disable=apply-builtin,
         missing-class-docstring,
         missing-module-docstring,
         attribute-defined-outside-init,
-        inconsistent-return-statements
+        inconsistent-return-statements,
+        consider-using-dict-items,
+        consider-iterating-dictionary,
+        unnecessary-list-index-lookup,
+
 
 [REPORTS]
 
