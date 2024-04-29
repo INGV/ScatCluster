@@ -96,7 +96,7 @@ language = 'en'
 nbsphinx_allow_errors = True
 
 # The name of your GitHub repository
-rtds_action_github_token = os.environ.get('GITHUB_TOKEN',)
+rtds_action_github_token = os.environ.get('GITHUB_TOKEN', )
 rtds_action_github_repo = 'INGV/ScatCluster'
 # A GitHub personal access token is required, more info below
 # Whether raise an error on Read the Docs if the

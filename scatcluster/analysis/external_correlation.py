@@ -1,4 +1,6 @@
 """External Correlation analysis module."""
+from typing import List
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,7 +16,7 @@ class ExternalCorrelation:
     def plot_external_correlation(self,
                                   df_predictions: pd.DataFrame,
                                   df_external: pd.DataFrame,
-                                  metric_list: list[str],
+                                  metric_list: List[str],
                                   title: str = None,
                                   **kwargs):
         """
