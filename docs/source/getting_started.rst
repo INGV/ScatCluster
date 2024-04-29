@@ -11,3 +11,7 @@ These series of notebook-based tutorials are designed to introduce the reader to
 
 .. toctree::
    :maxdepth: 2
+   01_processing_01_set_config.ipynb 
+   01_processing_02_processing_workflow.ipynb 
+   02_visualisation_01_dendrograms_waveforms.ipynb 
+   03_analysis_01_timewindow_cluster_comparison.ipynb

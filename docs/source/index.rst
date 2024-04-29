@@ -10,7 +10,7 @@ Contents
    :maxdepth: 2
 
    guide
-   tutorials
+   getting_started
 
 About
 -----
@@ -29,11 +29,11 @@ License
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
-Please use the following dropdown menu to see the full terms of use, or directrly have a look at the LICENCE file in the root directory of the repository.
+Please use the following dropdown menu to see the full terms of use, or directly have a look at the LICENSE file in the root directory of the repository.
 
 .. dropdown:: Full terms of use
 
-   .. include:: ../../LICENCE
+   .. include:: ../../LICENSE
       :literal:
 
 Installation
