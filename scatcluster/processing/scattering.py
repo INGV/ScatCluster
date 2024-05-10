@@ -14,7 +14,7 @@ from obspy.core.trace import Trace
 from scatseisnet.network import ScatteringNetwork
 from scatseisnet.operation import segmentize
 
-from scatcluster.helper import is_gpu
+from scatcluster.helper import is_gpu_available
 
 
 class Scattering:
@@ -138,7 +138,7 @@ class Scattering:
         _, ax = plt.subplots(NROWS, 2, sharey='row', figsize=(10, 8))
         # Loop over network layers
         for bank_enum, bank in enumerate(self.net.banks):
-            if is_gpu():
+            if is_gpu_available():
                 bank.wavelets = bank.wavelets.get()
                 bank.spectra = bank.spectra.get()
                 # bank.ratios = bank.ratios.get()
