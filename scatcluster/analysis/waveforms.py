@@ -11,7 +11,7 @@ from matplotlib import dates as mdates
 from obspy.core import UTCDateTime
 from scipy.spatial.distance import euclidean
 
-from scatcluster.helper import COLORS, is_gpu
+from scatcluster.helper import COLORS, is_gpu_available
 
 
 class Waveforms:
@@ -288,7 +288,7 @@ class Waveforms:
                                                    channel: str = 'HHZ',
                                                    num_waveforms: int = 5,
                                                    num_scat_coeff_stacking: int = 10,
-                                                   GPU: bool = is_gpu()):
+                                                   GPU: bool = is_gpu_available()):
         """
         Plot waveforms, envelopes, and scattering coefficients for different clusters.
 
@@ -297,7 +297,7 @@ class Waveforms:
         - channel (str): The channel to plot waveforms for (default is 'HHZ').
         - num_waveforms (int): Number of waveforms to plot (default is 5).
         - num_scat_coeff_stacking (int): Number of scattering coefficients to stack (default is 10).
-        - GPU (bool): Flag indicating if GPU is used for processing (default is determined by `is_gpu()`).
+        - GPU (bool): Flag indicating if GPU is used for processing (default is determined by `is_gpu_available()`).
 
         Returns:
         None
