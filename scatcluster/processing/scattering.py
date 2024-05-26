@@ -13,6 +13,8 @@ from scatseisnet.network import ScatteringNetwork
 from scatseisnet.operation import segmentize
 
 from scatcluster.helper import is_gpu_available
+import xarray as xr
+from tqdm import tqdm
 
 
 class Scattering:
@@ -64,6 +66,10 @@ class Scattering:
         ]
 
         self.data_day_list = day_list
+        
+        
+    def build_channel_list(self) -> None:
+        self.channel_list = [trace.stats.channel for trace in self.sample_stream]
 
     def stream_process(self, stream: Stream) -> Stream:
         """PreProcessing of obspy stream before calculating scattering coefficients
@@ -339,7 +345,95 @@ class Scattering:
                 pd.date_range((UTCDateTime(self.data_starttime) + (60 * 60 * 24)).strftime('%Y%m%d'),
                               UTCDateTime(self.data_endtime).strftime('%Y%m%d')).strftime('%Y-%m-%d').tolist()):
             self.process_scatcluster_yyyy_mm_dd(day_start, day_end)
+            
+            
+    def filters_per_layer(self, model):
+        """Get the number of filters per layer."""
+        center_frequencies = [bank.centers for bank in model.banks]
+        return [len(centers) for centers in center_frequencies]
 
+
+    def layer_shape(self, model, order):
+        return self.filters_per_layer(model)[: order + 1]
+
+    def log(self, dataset, waterlevel=1e-10):
+        """Get the log of the scattering coefficients.
+
+        Parameters
+        ----------
+        dataset : xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+        waterlevel : float
+            The waterlevel to apply to the scattering coefficients.
+
+        Returns
+        -------
+        xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+        """
+        # Select where order 1 is non-zero for all channels and frequencies
+        select = (dataset.order_1 > waterlevel).all(dim=["channel", "f1"])
+        dataset = dataset.sel(time=select)
+
+        # Get the log
+        dataset.order_1.values = np.log10(dataset.order_1.values + waterlevel)
+        dataset.order_2.values = np.log10(dataset.order_2.values + waterlevel)
+
+        return dataset
+
+
+    def nyquist_mask(self, dataset):
+        """Mask the scattering coefficients with a Nyquist frequency.
+
+        The scattering coefficients of order 2 are masked when the frequency
+        f2 is greater than the frequency f1 to avoid aliasing.
+
+        Parameters
+        ----------
+        dataset : xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+
+        Returns
+        -------
+        xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+        """
+        # Mask order 2 when f2 > f1
+        dataset.order_2.data = dataset.order_2.where(
+            dataset.f1 >= dataset.f2, np.nan
+        )
+
+        # Drop NaN values
+        dataset = dataset.dropna(dim="time", how="all")
+
+        return dataset
+
+
+    def normalize(self, dataset):
+        """Normalize the scattering coefficients.
+
+        Parameters
+        ----------
+        dataset : xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+
+        Returns
+        -------
+        xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+        """
+        # Working dimensions for normalization
+        order_1_dim = ["time", "f1", "channel"]
+        order_2_dim = ["time", "f1", "f2", "channel"]
+
+        # Normalize
+        dataset.order_1.data -= dataset.order_1.mean(dim=order_1_dim).data
+        dataset.order_1.data /= dataset.order_1.std(dim=order_1_dim).data
+        dataset.order_2.data -= dataset.order_2.mean(dim=order_2_dim).data
+        dataset.order_2.data /= dataset.order_2.std(dim=order_2_dim).data
+
+        return dataset            
+            
     def process_vectorized_scattering_coefficients(self) -> None:
         """
         Process the vectorized scattering coefficients by loading data from files, reshaping the coefficients,
@@ -371,33 +465,82 @@ class Scattering:
         scat_coef_1 = np.vstack(SC1)
         del SC1
 
-        # RESHAPE THE SCATTERING COEFFICIENTS, STANDARDIZE IN LOG SPACE AND VECTORIZE THEM
-        scat_coef_0_reshaped = scat_coef_0.reshape(scat_coef_0.shape[0], scat_coef_0.shape[1] * scat_coef_0.shape[2])
-        scat_coef_1_reshaped = (scat_coef_1.reshape(scat_coef_1.shape[0],
-                                                    scat_coef_1.shape[1] * scat_coef_1.shape[2] * scat_coef_1.shape[3]))
+        
+        
+        n_samples = len(times)
+        n_channels = len(self.channel_list)
+        
+        attributes = {**self.__dict__}
 
-        # # Mask values for which f1 is smaller than f2
-        # coefficients.order_2.data = coefficients.order_2.where(
-        #     coefficients.f1 >= coefficients.f2, np.nan
-        # )
+        # The coordinates of the xarray dataset are the center frequencies of the
+        # scattering network, the starttime of the waveforms, and the channel names.
+        center_frequencies = [bank.centers for bank in self.net.banks]
+        coordinates = {
+                "time": ("time", times),
+                "channel": ("channel", self.channel_list),
+                **{
+                    f"f{i + 1}": (f"f{i + 1}", centers)
+                    for i, centers in enumerate(center_frequencies)
+                },
+            }
+        # We now fill the data variables of the xarray dataset. The data variables
+        # are the scattering coefficients for each order.
+        variables = dict()
+        for order in range(len(self.net)):
+            # Variable dimensions
+            dimension = (
+                "time",
+                "channel",
+                *[f"f{j + 1}" for j in range(order + 1)],
+            )
 
-        # # Remove NaNs
-        # coefficients = coefficients.dropna(dim="time", how="all")
+            # Initialize and fill scattering matrix with scattering coefficients
+            variable = np.zeros(
+                (n_samples, n_channels, *self.layer_shape(self.net, order))
+            )
 
-        # # Normalize
-        # dims = ["time", "f1", "f2"]
-        # coefficients.order_1.data -= coefficients.order_1.mean(dim=["time", "f1", "channel"]).data
-        # coefficients.order_1.data /= coefficients.order_1.std(dim=["time", "f1", "channel"]).data
-        # coefficients.order_2.data -= coefficients.order_2.mean(dim=["time", "f1", "f2", "channel"]).data
-        # coefficients.order_2.data /= coefficients.order_2.std(dim=["time", "f1", "f2", "channel"]).data
+            for time_stamp in tqdm(range(n_samples), desc=f"Xarray order {order + 1}"):
+                if order == 0:
+                    x = np.abs(scat_coef_0[time_stamp])
+                elif order == 1:
+                    x = np.abs(scat_coef_1[time_stamp])
+                for channel in range(n_channels):
+                    variable[time_stamp, channel] = x[order][channel]
 
-        scat_coef_vectorized = np.hstack((scat_coef_0_reshaped, scat_coef_1_reshaped))
-        # Store as part of self
-        self.data_times = times
-        self.data_scat_coef_vectorized = np.abs(np.log10(scat_coef_vectorized + 0.00001))
+            # Assign scattering matrix to data variable
+            variables[f"order_{order + 1}"] = (dimension, variable)
+
+        # Assign attributes and data variables to dataset
+        coefficients = xr.Dataset(
+            coords=coordinates,
+            data_vars=variables,
+            attrs=attributes,
+        )
+
+        # Drop empty channels (where transform_waveform returned None)
+        coefficients = coefficients.where(
+            coefficients.order_1.sum(dim=("f1", "channel")) > 0,
+            drop=True,
+        )
+        coefficients = self.log(coefficients, waterlevel=1e-20)
+        coefficients = self.nyquist_mask(coefficients)
+        coefficients = self.normalize(coefficients)
+        print(coefficients)
+        
+        # Extract design matrix
+        n_samples = coefficients.time.shape[0]
+        x1 = coefficients.order_1.data.reshape(n_samples, -1)
+        x2 = coefficients.order_2.data.reshape(n_samples, -1)
+        x = np.hstack((x1, x2))
+
+        # Remove NaNs
+        x[np.isnan(x)] = 0
+
+        self.data_times = coefficients.time.values
+        self.data_scat_coef_vectorized = x
 
         # Display statistics from the vectorization
-        print(f'Number of time windows of size {self.network_segment}s: {int(self.data_times.shape[0])}')
+        print(f'Number of valid time windows of size {self.network_segment}s: {int(self.data_times.shape[0])}')
         print(f'Number of days investigated: {int((self.network_segment * self.data_times.shape[0])/86400)}')
         print(f'Number of Scat Coefficients: {int(self.data_scat_coef_vectorized.shape[1])}')
         print(f'Vectorized Scat Coefficients: {self.data_scat_coef_vectorized.shape}')
