@@ -94,7 +94,7 @@ class ExternalCorrelation:
 
         return df_merge
 
-    def interpolate_missing_values(self, df_merge: pd.DataFrame, target_cols: List[str] | None = None):
+    def interpolate_missing_values(self, df_merge: pd.DataFrame, target_cols):
         """
         Interpolate missing values in the specified columns of a merged dataframe.
 
