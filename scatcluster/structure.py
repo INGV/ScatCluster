@@ -12,10 +12,10 @@ class Structure:
 
         Args:
             directories (List[str], optional): Directories created as part of the workflow.
-            Defaults to ['scatterings', 'figures', 'networks', 'ICA','clustering','data'].
+            Defaults to ['scatterings', 'figures', 'networks', 'ICA','clustering','data', 'config'].
         """
         if directories is None:
-            directories = ['scatterings', 'figures', 'networks', 'ICA', 'clustering', 'data']
+            directories = ['scatterings', 'figures', 'networks', 'ICA', 'clustering', 'data', 'config']
 
         if self.data_savepath == '':
             raise ValueError('"data_savepath" has not been set up correctly. Kindly update the parametrization.')
