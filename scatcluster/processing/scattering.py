@@ -61,7 +61,7 @@ class Scattering:
         day_list = [
             day_start for day_start in pd.date_range(
                 UTCDateTime(self.data_starttime).strftime('%Y%m%d'), (
-                    UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')).strftime('%Y-%m-%d')
+                    UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')).strftime('%Y-%m-%d').tolist()
             if day_start not in [UTCDateTime(day_exc).strftime('%Y-%m-%d') for day_exc in self.data_exclude_days]
         ]
 
@@ -333,12 +333,12 @@ class Scattering:
         for day_start, day_end in zip(
                 pd.date_range(
                     UTCDateTime(self.data_starttime).strftime('%Y%m%d'),
-                    (UTCDateTime(self.data_endtime) -
-                     (60 * 60 * 24)).strftime('%Y%m%d')).format(formatter=lambda x: x.strftime('%Y-%m-%d')),
+                    (UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')
+                    ).strftime('%Y-%m-%d').tolist(),
                 pd.date_range(
                     (UTCDateTime(self.data_starttime) + (60 * 60 * 24)).strftime('%Y%m%d'),
-                    UTCDateTime(
-                        self.data_endtime).strftime('%Y%m%d')).format(formatter=lambda x: x.strftime('%Y-%m-%d'))):
+                    UTCDateTime(self.data_endtime).strftime('%Y%m%d')
+                    ).strftime('%Y-%m-%d').tolist()):
             self.process_scatcluster_yyyy_mm_dd(day_start, day_end)
 
     def process_vectorized_scattering_coefficients(self) -> None:
