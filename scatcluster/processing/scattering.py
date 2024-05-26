@@ -333,12 +333,9 @@ class Scattering:
         for day_start, day_end in zip(
                 pd.date_range(
                     UTCDateTime(self.data_starttime).strftime('%Y%m%d'),
-                    (UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')
-                    ).strftime('%Y-%m-%d').tolist(),
-                pd.date_range(
-                    (UTCDateTime(self.data_starttime) + (60 * 60 * 24)).strftime('%Y%m%d'),
-                    UTCDateTime(self.data_endtime).strftime('%Y%m%d')
-                    ).strftime('%Y-%m-%d').tolist()):
+                    (UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')).strftime('%Y-%m-%d').tolist(),
+                pd.date_range((UTCDateTime(self.data_starttime) + (60 * 60 * 24)).strftime('%Y%m%d'),
+                              UTCDateTime(self.data_endtime).strftime('%Y%m%d')).strftime('%Y-%m-%d').tolist()):
             self.process_scatcluster_yyyy_mm_dd(day_start, day_end)
 
     def process_vectorized_scattering_coefficients(self) -> None:
