@@ -35,6 +35,12 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+    - name: Install securesystemslib
+      run: >-
+        python3 -m
+        pip install
+        securesystemslib==0.31.0
+        --user
 
   publish-to-pypi:
     name: >-
