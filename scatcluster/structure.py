@@ -3,7 +3,7 @@ import json
 import os
 from glob import glob
 from typing import List, Optional
-
+from glob import glob
 
 class Structure:
 
@@ -130,3 +130,19 @@ class Structure:
 
         """
         print(self.__dict__)
+        
+    def list_available_configurations(self):
+        """
+        Lists all the available configurations in the config directory.
+
+        This function uses the `glob` function to find all the JSON files in the config directory.
+        It prints the list of JSON files found.
+
+        Parameters:
+            self (object): The instance of the class.
+
+        Returns:
+            None
+        """
+        print(glob(f'{self.data_savepath}config/*json'))
+        
