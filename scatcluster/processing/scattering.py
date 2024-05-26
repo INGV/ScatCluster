@@ -60,9 +60,9 @@ class Scattering:
         """
         day_list = [
             day_start for day_start in pd.date_range(
-                UTCDateTime(self.data_starttime).strftime('%Y%m%d'), (UTCDateTime(self.data_endtime) -
-                                                                      (60 * 60 * 24)).strftime('%Y%m%d')).format(
-                                                                          formatter=lambda x: x.strftime('%Y-%m-%d'))
+                UTCDateTime(self.data_starttime).strftime('%Y%m%d'), 
+                (UTCDateTime(self.data_endtime) - (60 * 60 * 24)).strftime('%Y%m%d')
+                ).strftime('%Y-%m-%d')
             if day_start not in [UTCDateTime(day_exc).strftime('%Y-%m-%d') for day_exc in self.data_exclude_days]
         ]
 
