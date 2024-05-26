@@ -112,12 +112,12 @@ To make a release, please follow these steps:
    ```
 
    This will trigger [GitHub Actions](https://github.com/INGV/ScatCluster/actions) which will:
-   
+
    1. Automatically push to PyPI and PyPI test:
       [GitHub Actions PyPI release workflow](https://github.com/INGV/ScatCluster/actions/workflows/pypi_release.yml)
-   
+
    2. Run pre-commit changes to check code quality:
       [GitHub Actions pre-commit workflow](https://github.com/INGV/ScatCluster/actions/workflows/pre-commit.yml)
-   
+
    3. Build documentation:
       [GitHub Actions documentation build workflow](https://github.com/INGV/ScatCluster/actions/workflows/docs.yml)
