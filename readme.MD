@@ -18,7 +18,7 @@ Installation is achieved by following these instructions:
 `pip install scatcluster`
 
 ## Getting Started
-To help you get started with ScatCluster, we have created a set of notebooks located in the `docs/source/getting_started` directory. These notebooks guide you through the entire workflow, which is divided into three main sections: Processing, Visualisation, and Analysis. Below is a detailed description of each section and its corresponding notebooks.
+To help you get started with ScatCluster, we have created a set of notebooks located in the [`./docs/source/getting_started`](https://github.com/INGV/ScatCluster/tree/main/docs/source/getting_started) directory. These notebooks guide you through the entire workflow, which is divided into three main sections: Processing, Visualisation, and Analysis. Below is a detailed description of each section and its corresponding notebooks.
 
 ### 1. Processing
 
