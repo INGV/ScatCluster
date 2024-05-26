@@ -2,12 +2,12 @@
 import json
 import os
 from glob import glob
-from typing import List
+from typing import List, Optional
 
 
 class Structure:
 
-    def prepare_directory_structure(self, directories: List[str] | None = None) -> None:
+    def prepare_directory_structure(self, directories: Optional[List[str]] = None) -> None:
         """Build directory structure required for workflow processing
 
         Args:
