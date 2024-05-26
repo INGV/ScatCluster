@@ -3,14 +3,12 @@ import pickle
 
 import matplotlib.pyplot as plt
 import numpy as np
-import obspy
 import pandas as pd
 import scipy as sp
 from matplotlib import dates as mdates
 from obspy.clients.filesystem.sds import Client
 from obspy.core import UTCDateTime
 from obspy.core.stream import Stream
-from obspy.core.trace import Trace
 from scatseisnet.network import ScatteringNetwork
 from scatseisnet.operation import segmentize
 
@@ -67,21 +65,24 @@ class Scattering:
 
         self.data_day_list = day_list
 
-    def trace_process(self, trace: Trace) -> Trace:
-        """Processing happening to all traces
+    def stream_process(self, stream: Stream) -> Stream:
+        """PreProcessing of obspy stream before calculating scattering coefficients
 
         Args:
-            trace (Trace): Obspy trace original
+            stream (Stream): Obspy Stream
 
         Returns:
-            Trace: process obspy trace
+            Stream: processed obspy Stream
         """
-        trace.decimate(2)
-        trace.detrend('linear')
-        trace.filter(type='highpass', freq=1)
-        trace.detrend('demean')
-        trace.taper(0.05)
-        return trace
+        # Remove trend
+        stream.detrend(type="demean")
+        # High-pass filter
+        stream.filter(type="highpass", freq=0.5)
+        # Remove residual trend
+        stream.detrend(type="constant")
+        # Remove edge effects
+        stream.taper(0.05)
+        return stream
 
     def load_data(self, starttime: UTCDateTime, endtime: UTCDateTime, channel: str) -> Stream:
         """Load the seismic and trim according to data_starttime and data_endtime
@@ -103,9 +104,7 @@ class Scattering:
                                           starttime=starttime,
                                           endtime=endtime)
 
-            traces = [self.trace_process(trace) for trace in stream]
-            stream = obspy.core.stream.Stream(traces)
-            del traces
+            stream = self.stream_process(stream)
             stream.merge(method=1, fill_value=0)
             stream.trim(starttime, endtime, pad=True, fill_value=0)
             return stream
