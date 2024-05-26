@@ -31,7 +31,7 @@ jobs:
       - name: Install packages
         run: |
           python -m pip install --upgrade pip
-          python -m pip install pre-commit pylint
+          python -m pip install -r .github/workflows/requirements_precommit.txt
 
       - name: Lint
         run: pre-commit run --all-files --config pre-commit-hooks/.pre-commit-config.yaml
