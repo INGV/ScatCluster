@@ -93,8 +93,6 @@ class ICA:
             kwargs['whiten'] = 'unit-variance' if kwargs.get('whiten') is None else kwargs.get('whiten')
             model = FastICA(n_components=num_ICA, random_state=42, **kwargs)
 
-        # SCALING
-        print('RobustScaling of data before fitting ICA')
         # Exclude any timestamps
         scat_coeff_data = self.data_scat_coef_vectorized.copy()
         if exclude_timestamps is not None:
@@ -106,21 +104,12 @@ class ICA:
                 ts_index = self._get_index_from_UTC_timestamp(ts)
                 scat_coeff_data = np.delete(scat_coeff_data, np.s_[ts_index:ts_index + exclude_timestamps_skip], 0)
 
-        scaler = RobustScaler()
-        # fit on subset
-        scaler.fit(scat_coeff_data)
-        # Transform on full data
-        scat_coeff_data_scaled = scaler.transform(self.data_scat_coef_vectorized.copy())
-
-        print('Fitting and transforming the data for FastICA')
-        # fit on a subset of data
-        model.fit(scaler.transform(scat_coeff_data))
-        # Transform on full data
-        features = model.transform(scat_coeff_data_scaled)
+        print('Fitting FastICA')
+        features = model.transform(scat_coeff_data)
 
         features_inverse = model.inverse_transform(features)
-        score_exp_var = explained_variance_score(scat_coeff_data_scaled, features_inverse)
-        score_mse = mean_squared_error(scat_coeff_data_scaled, features_inverse)
+        score_exp_var = explained_variance_score(scat_coeff_data, features_inverse)
+        score_mse = mean_squared_error(scat_coeff_data, features_inverse)
         print(f'      ICAs #{num_ICA}: Explained Variance {score_exp_var * 100:0.5f}%: MSE {score_mse:0.5f}')
 
         self.ica = model
