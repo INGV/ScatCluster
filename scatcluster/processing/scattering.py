@@ -321,6 +321,9 @@ class Scattering:
                              scat_coef_0=scattering_coefficients[0],
                              scat_coef_1=scattering_coefficients[1],
                              times=times_scat)
+                    
+                    # print stats
+                    print(f"min {data.min()} : max {data.max()} : mean {data.mean()}")
 
     def process_scatcluster_for_range(self) -> None:
         """Process scatcluster_yyyy_mm_dd for range of YYYY-MM-DDs
