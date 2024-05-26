@@ -68,6 +68,11 @@ If you want to use a GPU, you need to install the package with the package CuPy.
    pip install scatcluster[gpu]
 
 
+Contributing and Releases
+-------------------------
+Check out the :doc:`contributing` section for further information on how to contribute to the project and make releases.
+
+
 References
 ----------
 
