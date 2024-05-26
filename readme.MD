@@ -13,9 +13,18 @@ A workflow for clustering continuous time series with a deep scattering network.
 </div>
 
 ## Installation
-Installation is achieved by following these instructions:
+Installation is achieved via pip. To install using pip, execute the
+```bash
+# CPU-only installation
+pip install scatcluster
+```
 
-`pip install scatcluster`
+If you want to use a GPU, you need to install the package with the package CuPy. The code will try to find it and use it if it is installed. You can install it with the following command.
+```bash
+# GPU usage
+pip install scatcluster[gpu]
+```
+
 
 ## Getting Started
 To help you get started with ScatCluster, we have created a set of notebooks located in the [`./docs/source/getting_started`](https://github.com/INGV/ScatCluster/tree/main/docs/source/getting_started) directory. These notebooks guide you through the entire workflow, which is divided into three main sections: Processing, Visualisation, and Analysis. Below is a detailed description of each section and its corresponding notebooks.
