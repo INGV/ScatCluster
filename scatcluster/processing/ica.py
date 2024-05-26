@@ -105,6 +105,7 @@ class ICA:
                 scat_coeff_data = np.delete(scat_coeff_data, np.s_[ts_index:ts_index + exclude_timestamps_skip], 0)
 
         print('Fitting FastICA')
+        model.fit(scat_coeff_data)
         features = model.transform(scat_coeff_data)
 
         features_inverse = model.inverse_transform(features)
