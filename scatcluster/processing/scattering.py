@@ -581,6 +581,12 @@ class Scattering:
             f'{self.network_name}_scat_coef_xarray.nc')
         
     def load_scattering_coefficients_xarray(self):
+        """
+        Load the scattering coefficients from an xarray dataset file and store them in the `scattering_coefficients_xarray` attribute.
+
+        Returns:
+            xr.Dataset: The loaded scattering coefficients dataset.
+        """
         scat_coeff_xr = xr.open_dataset(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
                                         f'{self.network_name}_scat_coef_xarray.nc')
         self.scattering_coefficients_xarray = scat_coeff_xr
