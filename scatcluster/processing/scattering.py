@@ -141,7 +141,7 @@ class Scattering:
         octaves = [bank.octaves for bank in self.net.banks]
         height_ratios = 2, (octaves[1] + 2) / (octaves[0] + 2)
         grid = dict(height_ratios=height_ratios, wspace=0.1, hspace=0.1)
-        _, axes = plt.subplots(NROWS, 2, figsize=(10, 12), gridspec_kw=grid, sharey="row"
+        _, axes = plt.subplots(NROWS, 2, figsize=(10, 10), gridspec_kw=grid, sharey="row"
         )
         # Loop over network layers
         for ax_enum, (ax, bank) in enumerate(zip(axes, self.net.banks)):
