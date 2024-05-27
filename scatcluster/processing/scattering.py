@@ -11,8 +11,7 @@ from obspy.core import UTCDateTime
 from obspy.core.stream import Stream
 from scatseisnet.network import ScatteringNetwork
 from scatseisnet.operation import segmentize
-
-from scatcluster.helper import is_gpu_available
+import cupy as cp
 import xarray as xr
 from tqdm import tqdm
 
