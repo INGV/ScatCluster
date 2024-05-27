@@ -492,6 +492,8 @@ class Scattering:
         
         
         n_samples = len(times)
+        if self.channel_list is None:
+            self.build_channel_list()
         n_channels = len(self.channel_list)
         
         attributes = {k:str(v) for k,v in self.__dict__.items()}
@@ -579,6 +581,8 @@ class Scattering:
         coefficients.to_netcdf(
             f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
             f'{self.network_name}_scat_coef_xarray.nc')
+        
+        return coefficients
         
     def load_scattering_coefficients_xarray(self):
         """
