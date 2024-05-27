@@ -68,6 +68,8 @@ class Scattering:
         
         
     def build_channel_list(self) -> None:
+        if self.sample_stream is None:
+            self.process_sample_data()
         self.channel_list = [trace.stats.channel for trace in self.sample_stream]
 
     def stream_process(self, stream: Stream) -> Stream:
@@ -574,6 +576,16 @@ class Scattering:
         np.save(
             f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
             f'{self.network_name}_scat_coef_vectorized.npy', self.data_scat_coef_vectorized)
+        coefficients.to_netcdf(
+            f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+            f'{self.network_name}_scat_coef_xarray.nc')
+        
+    def load_scattering_coefficients_xarray(self):
+        scat_coeff_xr = xr.open_dataset(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
+                                        f'{self.network_name}_scat_coef_xarray.nc')
+        self.scattering_coefficients_xarray = scat_coeff_xr
+        return scat_coeff_xr 
+        
 
     def preload_times(self):
         """

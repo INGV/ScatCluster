@@ -74,7 +74,8 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
             dendrogram_time_zone: str = None,  # pylint: disable=unused-argument
             waveforms_n_samples: int = 5,
             waveforms=None,  # pylint: disable=unused-argument
-            spectrograms=None):  # pylint: disable=unused-argument
+            spectrograms=None, # pylint: disable=unused-argument
+            scattering_coefficients_xarray=None):  # pylint: disable=unused-argument
         """
         Initializes a ScatCluster instance.
 
@@ -114,6 +115,7 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
             waveforms_n_samples (int, optional): The number of samples for waveforms. Defaults to 5.
             waveforms (Optional): The waveforms. Defaults to None.
             spectrograms (Optional): The spectrograms. Defaults to None.
+            scattering_coefficients_xarray (Optional): Xarray containing the scattering coefficients. Defaults to None.
         """
 
         self.sc_config = sc_config
@@ -168,6 +170,7 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
                              f'{self.network_banks_name}_{self.network_pooling}')
         self.waveforms = None
         self.spectrograms = None
+        self.scattering_coefficients_xarray = None
 
     def __setitem__(self, key, value):
         """
