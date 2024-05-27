@@ -494,7 +494,7 @@ class Scattering:
         n_samples = len(times)
         n_channels = len(self.channel_list)
         
-        attributes = {**self.__dict__}
+        attributes = {k:str(v) for k,v in self.__dict__.items()}
 
         # The coordinates of the xarray dataset are the center frequencies of the
         # scattering network, the starttime of the waveforms, and the channel names.
