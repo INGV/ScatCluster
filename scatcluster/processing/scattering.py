@@ -334,7 +334,7 @@ class Scattering:
                 else:
                     # Numpyification
                     times = stream[0].times('matplotlib')
-                    data = [trace.data for trace in stream]
+                    data = np.array([trace.data for trace in stream])
 
                     # Segmentization
                     data_segments = segmentize(data, self.network_samples_per_segment, self.network_samples_per_step)
