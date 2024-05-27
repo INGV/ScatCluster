@@ -5,3 +5,4 @@ flake8==7.0.0
 pylint==3.1.0
 interrogate==1.7.0
 docformatter==1.7.5
+pre-commit
