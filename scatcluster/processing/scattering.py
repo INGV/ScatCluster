@@ -5,7 +5,6 @@ import cupy as cp
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import stats as sp_stats
 import xarray as xr
 from matplotlib import dates as mdates
 from obspy.clients.filesystem.sds import Client
@@ -13,6 +12,7 @@ from obspy.core import UTCDateTime
 from obspy.core.stream import Stream
 from scatseisnet.network import ScatteringNetwork
 from scatseisnet.operation import segmentize
+from scipy import stats as sp_stats
 from tqdm import tqdm
 
 
@@ -53,9 +53,9 @@ class Scattering:
                         f'{self.network_name}_times.npy'
             self.data_times = np.load(file_path)
         except FileNotFoundError:
-            print(f"File not found: {file_path}")
+            print(f'File not found: {file_path}')
         except Exception as e:
-            print(f"An error occurred while loading data times: {e}")        
+            print(f'An error occurred while loading data times: {e}')
 
     def build_day_list(self) -> None:
         """Build data_day_list object
@@ -65,12 +65,12 @@ class Scattering:
             end_time = UTCDateTime(self.data_endtime)
             exclude_days = [UTCDateTime(day).strftime('%Y-%m-%d') for day in self.data_exclude_days]
             day_list = [
-                day_start for day_start in pd.date_range(start_time.strftime('%Y%m%d'), end_time.strftime('%Y%m%d')).strftime('%Y-%m-%d').tolist()
-                if day_start not in exclude_days
+                day_start for day_start in pd.date_range(start_time.strftime('%Y%m%d'), end_time.strftime(
+                    '%Y%m%d')).strftime('%Y-%m-%d').tolist() if day_start not in exclude_days
             ]
             self.data_day_list = day_list
         except Exception as e:
-            print(f"An error occurred while building day list: {e}")
+            print(f'An error occurred while building day list: {e}')
 
     def build_channel_list(self) -> None:
         if self.sample_stream is None:
