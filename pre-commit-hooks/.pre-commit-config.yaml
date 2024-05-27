@@ -32,7 +32,7 @@ repos:
     -   id: yapf
         args: [-vv, -r, "--style={based_on_style: pep8, column_limit: 120}", -i]
 -   repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
+    rev: 7.0.0
     hooks:
     -   id: flake8
         args: [ "--max-line-length=120", "--extend-ignore=E231,E741,E127" ]
@@ -46,21 +46,21 @@ repos:
     hooks:
     -   id: python-safety-dependencies-check
         files: requirements.txt
-# -   repo: https://github.com/pylint-dev/pylint
-#     rev: v3.1.0
-#     hooks:
-#     -   id: pylint
-#         name: pylint
-#         entry: pylint
-#         language: system
-#         types: [python]
-#         args:
-#            [
-#              "-rn", # Only display messages
-#         #          "-sn", # Don't display the score
-#              "--rcfile=pre-commit-hooks/.pylintrc", # Link to your config file
-#              "--load-plugins=pylint.extensions.docparams", # Load an extension
-#            ]
+-   repo: https://github.com/pylint-dev/pylint
+    rev: v3.1.0
+    hooks:
+    -   id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+           [
+             "-rn", # Only display messages
+        #          "-sn", # Don't display the score
+             "--rcfile=pre-commit-hooks/.pylintrc", # Link to your config file
+             "--load-plugins=pylint.extensions.docparams", # Load an extension
+           ]
 -   repo: https://github.com/MarcoGorelli/madforhooks # sorts environment.yml
     rev: 0.3.0
     hooks:
