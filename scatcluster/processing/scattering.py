@@ -132,7 +132,7 @@ class Scattering:
                 f'{self.network_name}.pickle', 'wb') as handle:
             pickle.dump(self.net, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def plot_network_filter_banks(self) -> None:
+    def plot_network_filter_banks(self, savefig: bool = True) -> None:
         """
         Plot the filter banks
         """
@@ -203,8 +203,9 @@ class Scattering:
         plt.suptitle('ScatCluster Parametrization'
                     f'\nSegment:{self.network_segment}s  Step: {self.network_step}\n Banks: {self.network_banks_name}')
         plt.subplots_adjust(top=0.9) 
-        plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
-                    f'{self.network_name}_filter_banks.png')
+        if savefig:
+            plt.savefig(f'{self.data_savepath}figures/{self.data_network}_{self.data_station}_{self.data_location}_'
+                        f'{self.network_name}_filter_banks.png')
 
     def load_sample_data(self) -> Stream:
         """Load sample
