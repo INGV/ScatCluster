@@ -31,23 +31,21 @@ To help you get started with ScatCluster, we have created a set of notebooks loc
 
 ### 1. Processing
 
-The Processing section includes two notebooks that prepare your data for subsequent stages:
+The Processing section includes three notebooks that prepare your data for interpretation:
 
-- **01_processing_01_set_config.ipynb**: In this notebook, you will set the parameters for your experiment and specify the location where results will be stored. This step is crucial for ensuring that your data processing and analysis are properly configured.
+- **01_processing_01_choose_network.ipynb**: This notebook offers an interactive means to determine the best network architecture for your dataset. 
 
-- **01_processing_02_processing_workflow.ipynb**: This notebook executes the processing of the scatseis transform. The duration of this step depends on the dataset parameters you set in the previous notebook. It is designed to handle the heavy lifting of data transformation, preparing your time series data for clustering.
+- **01_processing_02_set_config.ipynb**: In this notebook, you will set the parameters for your experiment and specify the location where results will be stored. This step is crucial for ensuring that your data processing and analysis are properly configured.
 
-### 2. Visualisation
+- **01_processing_03_processing_workflow.ipynb**: This notebook executes the processing of the ScatCluster transform. The duration of this step depends on the dataset parameters you set in the previous notebook. It is designed to handle the heavy lifting of data transformation, preparing your time series data for clustering.
 
-The Visualisation section contains a notebook that helps you visualize the clustering results:
+### 2. Analysis
 
-- **02_visualisation_01_dendrograms_waveforms.ipynb**: Use this notebook to build hierarchical clustering diagrams and generate appropriate clusters. Visualization is key to understanding the structure and relationships within your time series data.
+The Analysis section contains notebook that helps you interpret the clustering results:
 
-### 3. Analysis
+- **02_analysis_01_dendrograms_waveforms.ipynb**: Use this notebook to build hierarchical clustering diagrams and generate appropriate clusters. Visualization is key to understanding the structure and relationships within your time series data.
 
-The Analysis section offers a notebook to dive deeper into the clustering results:
-
-- **03_analysis_01_timewindow_cluster_comparison.ipynb**: This notebook allows you to analyze the different clusters identified in the previous stages. By comparing clusters across different time windows, you can gain insights into the dynamics and patterns within your time series data.
+- **02_analysis_02_timewindow_cluster_comparison.ipynb**: This notebook allows you to analyze the different clusters identified in the previous stages. By comparing clusters across different time windows, you can gain insights into the dynamics and patterns within your time series data.
 
 By following these notebooks, you will be able to execute the full workflow of ScatCluster, from data preparation and transformation to visualization and in-depth analysis. This structured approach ensures a comprehensive understanding and effective clustering of your time series data. Happy clustering!
 
