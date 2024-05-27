@@ -38,7 +38,7 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
     INGV ScatCluster class workflow for clustering continuous time series with a deep scattering network.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=dangerous-default-value
             self,
             data_savepath: str,
             data_client_path: str,
@@ -74,7 +74,7 @@ class ScatCluster(Structure, Scattering, ICA, Dendrogram, Waveforms, Predictions
             dendrogram_time_zone: str = None,  # pylint: disable=unused-argument
             waveforms_n_samples: int = 5,
             waveforms=None,  # pylint: disable=unused-argument
-            spectrograms=None, # pylint: disable=unused-argument
+            spectrograms=None,  # pylint: disable=unused-argument
             scattering_coefficients_xarray=None):  # pylint: disable=unused-argument
         """
         Initializes a ScatCluster instance.

@@ -31,7 +31,7 @@ class Waveforms:
         stream = self.load_data(starttime=UTCDateTime(self.data_sample_starttime),
                                 endtime=UTCDateTime(self.data_sample_endtime),
                                 channel=self.data_channel)
-        channel_list = sorted(list(set([trace.stats.channel for trace in stream])))
+        channel_list = sorted(trace.stats.channel for trace in stream)
 
         if clusters is not None:
             classes = clusters

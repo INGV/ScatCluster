@@ -22,12 +22,12 @@ repos:
     -   id: pycln
         args: [--all]
 -   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
     -   id: isort
         args: [-l 120]
 -   repo: https://github.com/google/yapf
-    rev: v0.40.1
+    rev: v0.40.2
     hooks:
     -   id: yapf
         args: [-vv, -r, "--style={based_on_style: pep8, column_limit: 120}", -i]
@@ -42,12 +42,12 @@ repos:
     -   id: python-bandit-vulnerability-check
         args: [-ll, --skip, "B321,B402,B301", --recursive, .]
 -   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.1
+    rev: v1.3.3
     hooks:
     -   id: python-safety-dependencies-check
         files: requirements.txt
 -   repo: https://github.com/pylint-dev/pylint
-    rev: v3.1.0
+    rev: v3.2.2
     hooks:
     -   id: pylint
         name: pylint
@@ -62,7 +62,7 @@ repos:
              "--load-plugins=pylint.extensions.docparams", # Load an extension
            ]
 -   repo: https://github.com/MarcoGorelli/madforhooks # sorts environment.yml
-    rev: 0.3.0
+    rev: 0.4.1
     hooks:
     -   id: conda-env-sorter
 -   repo: https://github.com/pryorda/dockerfilelint-precommit-hooks

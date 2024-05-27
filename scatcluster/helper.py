@@ -52,7 +52,7 @@ def tqdm_importer():
     """
     A function that imports the tqdm module based on the current environment.
     """
-    if is_notebook:
+    if is_notebook():
         pass
     else:
         pass

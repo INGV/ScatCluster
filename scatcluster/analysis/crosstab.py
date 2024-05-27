@@ -103,7 +103,7 @@ class SSNCrossTabAnalysis:
         else:
             raise ValueError(
                 f"Provided Normalization is not valid. This can be 'None' or [{normalization_options}]. Kindly see "
-                f"https://pandas.pydata.org/docs/reference/api/pandas.crosstab.html for more info.")
+                f'https://pandas.pydata.org/docs/reference/api/pandas.crosstab.html for more info.')
         ct_data = ct_data.sort_index(ascending=False)
         return ct_data, factor_difference, fowlkes_mallows_score(df_preds.predictions_1, df_preds.predictions_2)
 

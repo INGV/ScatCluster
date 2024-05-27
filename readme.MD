@@ -33,7 +33,7 @@ To help you get started with ScatCluster, we have created a set of notebooks loc
 
 The Processing section includes three notebooks that prepare your data for interpretation:
 
-- **01_processing_01_choose_network.ipynb**: This notebook offers an interactive means to determine the best network architecture for your dataset. 
+- **01_processing_01_choose_network.ipynb**: This notebook offers an interactive means to determine the best network architecture for your dataset.
 
 - **01_processing_02_set_config.ipynb**: In this notebook, you will set the parameters for your experiment and specify the location where results will be stored. This step is crucial for ensuring that your data processing and analysis are properly configured.
 

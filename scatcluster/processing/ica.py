@@ -13,7 +13,6 @@ from obspy.core import UTCDateTime
 from scipy.signal import medfilt
 from sklearn.decomposition import FastICA
 from sklearn.metrics import explained_variance_score, mean_squared_error
-from sklearn.preprocessing import RobustScaler
 
 from scatcluster.helper import demad, list_of_strings
 
@@ -86,7 +85,8 @@ class ICA:
         # check if reduction exists already
         if os.path.exists(ica_model_path) and self.ica_overwrite_previous_models is False:
             print('  Using pre-calculated model')
-            model = pickle.load(open(ica_model_path, 'rb'))
+            with open(ica_model_path, 'rb') as f:
+                model = pickle.load(f)
         else:
             # else fit
             kwargs['max_iter'] = 1000 if kwargs.get('max_iter') is None else kwargs.get('max_iter')
@@ -180,14 +180,13 @@ class ICA:
         if not os.path.exists(f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
                               f'{self.network_name}_dimension_{num_ICA}.pickle'):
             raise ValueError(
-                f"The supplied number of ICAs {num_ICA} has not been computed. Choose another number for the ICAs or "
+                f'The supplied number of ICAs {num_ICA} has not been computed. Choose another number for the ICAs or '
                 f"calcate using 'process_ICA_single'")
 
-        self.ica = pickle.load(
-            open(
-                f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_'
-                f'{self.network_name}_dimension_{num_ICA}.pickle', 'rb'))
-
+        ica_file = f'{self.data_savepath}ICA/{self.data_network}_{self.data_station}_{self.data_location}_' + \
+                    f'{self.network_name}_dimension_{num_ICA}.pickle'
+        with open(ica_file, 'rb') as f:
+            self.ica = pickle.load(f)
         ica_results = np.load(f'{self.data_savepath}data/{self.data_network}_{self.data_station}_{self.data_location}_'
                               f'{self.network_name}_features_{num_ICA}.npz')
         self.ica_features = ica_results['features']

@@ -17,5 +17,3 @@ These series of notebook-based tutorials are designed to introduce the reader to
    getting_started/01_processing_03_processing_workflow.ipynb
    getting_started/02_analysis_01_dendrograms_waveforms.ipynb
    getting_started/02_analysis_02_timewindow_cluster_comparison.ipynb
-
-
