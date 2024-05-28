@@ -458,6 +458,31 @@ class Scattering:
         dataset.order_2.data /= dataset.order_2.std(dim=order_2_dim).data
 
         return dataset
+    
+    def min_max_scaling(self, dataset):
+        """Min-Max scaling the scattering coefficients.
+
+        Parameters
+        ----------
+        dataset : xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+
+        Returns
+        -------
+        xarray.Dataset
+            The scattering coefficients in the xarray.Dataset format.
+        """
+        # Working dimensions for normalization
+        order_1_dim = ['time', 'f1', 'channel']
+        order_2_dim = ['time', 'f1', 'f2', 'channel']
+
+        # Normalize
+        dataset.order_1.data -= dataset.order_1.min(dim=order_1_dim).data
+        dataset.order_1.data /= (dataset.order_1.max(dim=order_1_dim).data - dataset.order_1.min(dim=order_1_dim).data)
+        dataset.order_2.data -= dataset.order_2.min(dim=order_2_dim).data
+        dataset.order_2.data /= (dataset.order_2.max(dim=order_2_dim).data - dataset.order_2.min(dim=order_2_dim).data)
+
+        return dataset
 
     def process_vectorized_scattering_coefficients(self) -> None:
         """
@@ -548,6 +573,7 @@ class Scattering:
         coefficients = self.log(coefficients, waterlevel=1e-15)
         coefficients = self.nyquist_mask(coefficients)
         coefficients = self.normalize(coefficients)
+        coefficients = self.min_max_scaling(coefficients)
         print(coefficients)
 
         self.data_times = coefficients.time.values
