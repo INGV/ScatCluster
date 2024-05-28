@@ -545,7 +545,7 @@ class Scattering:
             coefficients.order_1.sum(dim=('f1', 'channel')) > 0,
             drop=True,
         )
-        coefficients = self.log(coefficients, waterlevel=1e-10)
+        coefficients = self.log(coefficients, waterlevel=1e-20)
         coefficients = self.nyquist_mask(coefficients)
         coefficients = self.normalize(coefficients)
         print(coefficients)
