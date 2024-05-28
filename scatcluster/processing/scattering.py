@@ -550,17 +550,8 @@ class Scattering:
         coefficients = self.normalize(coefficients)
         print(coefficients)
 
-        # Extract design matrix
-        n_samples = coefficients.time.shape[0]
-        x1 = coefficients.order_1.data.reshape(n_samples, -1)
-        x2 = coefficients.order_2.data.reshape(n_samples, -1)
-        x = np.hstack((x1, x2))
-
-        # Remove NaNs
-        x[np.isnan(x)] = 0
-
         self.data_times = coefficients.time.values
-        self.data_scat_coef_vectorized = x
+        self.data_scat_coef_vectorized = self.vectorize_scattering_coefficients_xarray(coefficients)
 
         # Display statistics from the vectorization
         print(f'Number of valid time windows of size {self.network_segment}s: {int(self.data_times.shape[0])}')
@@ -579,6 +570,17 @@ class Scattering:
                                f'{self.network_name}_scat_coef_xarray.nc')
 
         return coefficients
+    
+    def vectorize_scattering_coefficients_xarray(self, coefficients):
+        n_samples = coefficients.time.shape[0]
+        x1 = coefficients.order_1.data.reshape(n_samples, -1)
+        x2 = coefficients.order_2.data.reshape(n_samples, -1)
+        x = np.hstack((x1, x2))
+
+        x[np.isnan(x)] = 0        
+        
+        return x
+        
 
     def load_scattering_coefficients_xarray(self):
         """
