@@ -571,9 +571,9 @@ class Scattering:
             coefficients.order_1.sum(dim=('f1', 'channel')) > 0,
             drop=True,
         )
-        coefficients = self.log(coefficients, waterlevel=1e-15)
         coefficients = self.nyquist_mask(coefficients)
         coefficients = self.normalize(coefficients)
+        coefficients = self.log(coefficients, waterlevel=1e-5)
         coefficients = self.min_max_scaling(coefficients)
         print(coefficients)
 
@@ -623,7 +623,7 @@ class Scattering:
         return scat_coeff_xr
 
     
-    def plot_scattering_coefficients_normalisation(self):
+    def plot_scattering_coefficients_normalisation(self, **kwargs):
         """
         Plot the normalization of scattering coefficients. 
         This function loads the scattering coefficients from an xarray dataset file and plots the normalization of the coefficients. The plot is saved as a PNG file in the specified directory.
@@ -634,8 +634,9 @@ class Scattering:
         Returns:
             None
         """
+        kwargs['figsize'] = (10, 7) if kwargs.get('figsize') is None else kwargs.get('figsize')
         scat_vec = self.vectorize_scattering_coefficients_xarray(self.load_scattering_coefficients_xarray())
-        _, axs = plt.subplots(1, 1, figsize=(10, 7))
+        _, axs = plt.subplots(1, 1, **kwargs)
         for col in range(scat_vec.shape[1]):
             axs.plot(scat_vec[col], 'b', alpha=0.1)
         plt.title(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}\n'
