@@ -459,7 +459,7 @@ class Scattering:
         dataset.order_2.data /= dataset.order_2.std(dim=order_2_dim).data
 
         return dataset
-    
+
     def min_max_scaling(self, dataset):
         """Min-Max scaling the scattering coefficients.
 
@@ -622,11 +622,11 @@ class Scattering:
         self.scattering_coefficients_xarray = scat_coeff_xr
         return scat_coeff_xr
 
-    
     def plot_scattering_coefficients_normalisation(self, **kwargs):
         """
-        Plot the normalization of scattering coefficients. 
-        This function loads the scattering coefficients from an xarray dataset file and plots the normalization of the coefficients. The plot is saved as a PNG file in the specified directory.
+        Plot the normalization of scattering coefficients.
+        This function loads the scattering coefficients from an xarray dataset file and plots the
+        normalization of the coefficients. The plot is saved as a PNG file in the specified directory.
 
         Parameters:
             self (object): The instance of the class.
@@ -640,14 +640,13 @@ class Scattering:
         for col in range(scat_vec.shape[1]):
             axs.plot(scat_vec[col], 'b', alpha=0.1)
         plt.title(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}\n'
-                'Scattering Coefficients Normalization')
-        
-        plt.savefig(
-                f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_Scattering_Coefficients_Normalization.png')
+                  'Scattering Coefficients Normalization')
+
+        plt.savefig(f'{self.data_network}_{self.data_station}_{self.data_location}_{self.network_name}_' +
+                    'Scattering_Coefficients_Normalization.png')
 
         plt.show()
-    
-    
+
     def preload_times(self):
         """
         Preloads the times data from a numpy file and assigns it to the `data_times` attribute of the class.
