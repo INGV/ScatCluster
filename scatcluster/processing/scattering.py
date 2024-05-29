@@ -74,7 +74,7 @@ class Scattering:
 
     def build_channel_list(self) -> None:
         if self.sample_stream is None:
-            self.process_sample_data()
+            self.process_sample_data(plot_spectra=False)
         self.channel_list = [trace.stats.channel for trace in self.sample_stream]
 
     def stream_process(self, stream: Stream) -> Stream:
@@ -254,7 +254,7 @@ class Scattering:
                     f'{self.network_name}_sample_transform.png')
         plt.show()
 
-    def process_sample_data(self) -> None:
+    def process_sample_data(self, plot_spectra: bool = True) -> None:
         """Process the sample data range. This involes:
         (1) load the data and process,
         (2) define the sample_times and sample_data,
@@ -272,7 +272,8 @@ class Scattering:
         self.sample_times_scatterings = segmentize(self.sample_times, self.network_samples_per_segment,
                                                    self.network_samples_per_step)[:, 0]
         self.sample_scattering_coefficients = self.net.transform(self.sample_data_segments, self.reduce_type())
-        self.plot_sample_spectra()
+        if plot_spectra:
+            self.plot_sample_spectra()
 
     def plot_seismic(self, sample: bool = False):
         """
