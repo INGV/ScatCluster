@@ -630,9 +630,7 @@ class Scattering:
 
         Parameters:
             self (object): The instance of the class.
-
-        Returns:
-            None
+            **kwargs (dict): Additional keyword arguments to pass to the `plt.subplots` function.
         """
         kwargs['figsize'] = (10, 7) if kwargs.get('figsize') is None else kwargs.get('figsize')
         scat_vec = self.vectorize_scattering_coefficients_xarray(self.load_scattering_coefficients_xarray())
