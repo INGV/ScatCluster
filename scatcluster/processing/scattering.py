@@ -139,7 +139,7 @@ class Scattering:
                 f'{self.network_name}.pickle', 'wb') as handle:
             pickle.dump(self.net, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    def plot_network_filter_banks(self, savefig: bool = True) -> None:
+    def plot_network_filter_banks(self, savefig: bool = True, **kwargs) -> None:
         """
         Plot the filter banks
         """
@@ -148,7 +148,8 @@ class Scattering:
         octaves = [bank.octaves for bank in self.net.banks]
         height_ratios = 2, (octaves[1] + 2) / (octaves[0] + 2)
         grid = {'height_ratios': height_ratios, 'wspace': 0.1, 'hspace': 0.1}
-        _, axes = plt.subplots(NROWS, 2, figsize=(10, 10), gridspec_kw=grid, sharey='row')
+        kwargs['figsize'] = (10, 10) if kwargs.get('figsize') is None else kwargs.get('figsize')
+        _, axes = plt.subplots(NROWS, 2, gridspec_kw=grid, sharey='row', **kwargs)
         # Loop over network layers
         for ax_enum, (ax, bank) in enumerate(zip(axes, self.net.banks)):
             # Limit view to three times the temporal width of largest wavelet
