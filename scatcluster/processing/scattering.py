@@ -1,6 +1,8 @@
 import os
 import pickle
 
+import obspy
+
 import cupy as cp
 import matplotlib.pyplot as plt
 import numpy as np
@@ -108,13 +110,20 @@ class Scattering:
             Stream: Processed obspy stream
         """
         try:
-            client = Client(self.data_client_path)
-            stream = client.get_waveforms(network=self.data_network,
-                                          station=self.data_station,
-                                          location=self.data_location,
-                                          channel=channel,
-                                          starttime=starttime,
-                                          endtime=endtime)
+            if 'local:' in self.data_client_path:
+                stream = obspy.read( self.data_client_path.replace('local:',''))
+                stream.trim(starttime, endtime)
+            
+            elif 'sds.chris' in self.data_client_path:
+                client = Client(self.data_client_path)
+                stream = client.get_waveforms(network=self.data_network,
+                                            station=self.data_station,
+                                            location=self.data_location,
+                                            channel=channel,
+                                            starttime=starttime,
+                                            endtime=endtime)
+            else:
+                raise ValueError('Unknown data client path')
 
             stream = self.stream_process(stream)
             stream.merge(method=1, fill_value=0)
